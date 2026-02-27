@@ -12,6 +12,25 @@
 .swiftpm/
 migrate_working_dir/
 
+# Flutter specific
+.flutter-plugins
+.packages
+
+# Android specific
+android/local.properties
+android/app/release/
+android/app/debug/
+android/app/profile/
+
+# iOS specific
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+
+# Environment
+.env
+
 # IntelliJ related
 *.iml
 *.ipr
