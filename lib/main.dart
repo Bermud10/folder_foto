@@ -50,7 +50,7 @@ class OrderPhotoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Фото для Заказа',
+      title: 'Фотографии заказов',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadOrders();
-    _getStorageRoot(); // ← Добавьте эту строку
+    _getStorageRoot(); 
   }
 
   Future<void> _loadOrders() async {
@@ -106,7 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
           controller: controller,
           decoration: const InputDecoration(
             labelText: 'Номер заказа',
-            hintText: 'Например: 12345',
             border: OutlineInputBorder(),
           ),
           keyboardType: TextInputType.number,
@@ -136,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_orders.any((o) => o.orderNumber == orderNumber)) {
       Navigator.pop(context);
-      _showSnackBar('Заказ #$orderNumber уже существует');
+      _showSnackBar('Заказ:  $orderNumber уже существует');
       return;
     }
 
@@ -188,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Вы действительно хотите удалить заказ #${order.orderNumber}?',
+              'Вы действительно хотите удалить Заказ:  ${order.orderNumber}?',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 12),
@@ -265,7 +264,7 @@ Future<void> _deleteOrder(Order order) async {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Заказ #${order.orderNumber} удалён'),
+          content: Text('Заказ:  ${order.orderNumber} удалён'),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -322,7 +321,7 @@ Future<void> _deleteOrder(Order order) async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Фото для Заказа'),
+        title: const Text('Фотографии заказов'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Column(
@@ -383,7 +382,7 @@ Future<void> _deleteOrder(Order order) async {
                                 ),
                               ),
                               title: Text(
-                                'Заказ #${order.orderNumber}',
+                                'Заказ:  ${order.orderNumber}',
                                 style: const TextStyle(fontWeight: FontWeight.w500),
                               ),
                               subtitle: Text('Создан: ${_formatDate(order.createdAt)}'),
@@ -395,8 +394,7 @@ Future<void> _deleteOrder(Order order) async {
                                     icon: const Icon(Icons.delete_outline, color: Colors.red),
                                     onPressed: () => _showDeleteConfirmation(order),
                                     tooltip: 'Удалить заказ',
-                                  ),
-                                  Icon(Icons.chevron_right, color: Colors.grey[400]),
+                                  )
                                 ],
                               ),
                               onTap: () => _openExistingOrder(order),
@@ -532,11 +530,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       setState(() => _currentOrder = updatedOrder);
       widget.onOrderUpdated(updatedOrder);
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('✅ Фото сохранено'), duration: const Duration(seconds: 2)),
-        );
-      }
+      // уведомление о том что фотка с заказом сохранилась
+      // if (mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: const Text('✅ Фото сохранено'), duration: const Duration(seconds: 2)),
+      //   );
+      // }
     } catch (e) {
       print('❌ Ошибка: $e');
       if (mounted) {
@@ -574,7 +573,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   Widget build(BuildContext context) {
     if (!_isCameraInitialized) {
       return Scaffold(
-        appBar: AppBar(title: Text('Заказ #${_currentOrder.orderNumber}')),
+        appBar: AppBar(title: Text('Заказ:  ${_currentOrder.orderNumber}')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -595,18 +594,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Заказ #${_currentOrder.orderNumber}'),
+        title: Text('Заказ:  ${_currentOrder.orderNumber}'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Column(
         children: [
           // 🔹 Номер заказа
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Заказ #${_currentOrder.orderNumber}',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
+            padding: const EdgeInsets.only(top: 16),
           ),
 
           // 🔹 Камера (40% экрана)
@@ -694,7 +689,7 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Фото заказа #${widget.orderNumber}'),
+        title: Text('Фото заказа - ${widget.orderNumber}'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: _photos.isEmpty
