@@ -234,54 +234,54 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // 🔹 Удалить заказ и его фотографии
-Future<void> _deleteOrder(Order order) async {
-  try {
-    // 1. Получаем корень хранилища локально
-    String? storageRoot;
-    if (Platform.isAndroid) {
-      final appDir = await getExternalStorageDirectory();
-      if (appDir != null) {
-        storageRoot = appDir.parent.parent.parent.parent.path;
+  Future<void> _deleteOrder(Order order) async {
+    try {
+      // 1. Получаем корень хранилища локально
+      String? storageRoot;
+      if (Platform.isAndroid) {
+        final appDir = await getExternalStorageDirectory();
+        if (appDir != null) {
+          storageRoot = appDir.parent.parent.parent.parent.path;
+        }
       }
-    }
 
-    // 2. Удаляем папку с фотографиями
-    if (storageRoot != null) {
-      final orderPath = '$storageRoot/Pictures/OrderPhotos/${order.orderNumber}';
-      final orderDir = Directory(orderPath);
-      if (await orderDir.exists()) {
-        await orderDir.delete(recursive: true);
-        print('✅ Папка заказа удалена: $orderPath');
+      // 2. Удаляем папку с фотографиями
+      if (storageRoot != null) {
+        final orderPath = '$storageRoot/Pictures/OrderPhotos/${order.orderNumber}';
+        final orderDir = Directory(orderPath);
+        if (await orderDir.exists()) {
+          await orderDir.delete(recursive: true);
+          print('✅ Папка заказа удалена: $orderPath');
+        }
       }
-    }
 
-    // 3. Удаляем заказ из списка и сохраняем
-    setState(() {
-      _orders.removeWhere((o) => o.id == order.id);
-    });
-    await _saveOrders();
+      // 3. Удаляем заказ из списка и сохраняем
+      setState(() {
+        _orders.removeWhere((o) => o.id == order.id);
+      });
+      await _saveOrders();
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Заказ:  ${order.orderNumber} удалён'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
-  } catch (e) {
-    print('❌ Ошибка при удалении: $e');
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Ошибка при удалении: ${e.toString()}'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Заказ:  ${order.orderNumber} удалён'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print('❌ Ошибка при удалении: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка при удалении: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
-}
 
   // 🔹 Получение корня хранилища (для удаления папок)
   Future<String?> _getStorageRoot() async {
