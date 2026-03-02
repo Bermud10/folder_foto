@@ -30,9 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  camera: ^0.10.5+9          # Прямой доступ к камере
-  path_provider: ^2.1.2      # Пути к папкам
-  permission_handler: ^11.3.0 # Разрешения
+  camera: ^0.10.5+9
+  path_provider: ^2.1.2
+  permission_handler: ^11.3.0
+  shared_preferences: ^2.2.2
   uuid: ^4.3.3
 
   # The following adds the Cupertino Icons font to your application.
