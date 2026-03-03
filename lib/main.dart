@@ -529,13 +529,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       
       setState(() => _currentOrder = updatedOrder);
       widget.onOrderUpdated(updatedOrder);
-
-      // уведомление о том что фотка с заказом сохранилась
-      // if (mounted) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(content: const Text('✅ Фото сохранено'), duration: const Duration(seconds: 2)),
-      //   );
-      // }
     } catch (e) {
       print('❌ Ошибка: $e');
       if (mounted) {
