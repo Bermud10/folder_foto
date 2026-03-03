@@ -83,28 +83,23 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
     );
   }
 
-  void _showPhotoDialog(String photoPath) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.black,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            InteractiveViewer(
-              child: Image.file(File(photoPath), fit: BoxFit.contain),
-            ),
-            Positioned(
-              top: 40,
-              right: 16,
-              child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white, size: 32),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-          ],
-        ),
+ void _showPhotoDialog(String photoPath) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.black,
+    fullscreenDialog: true, // 🔹 Главное!
+    builder: (context) => Dialog(
+      backgroundColor: Colors.black,
+      insetPadding: EdgeInsets.zero,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          InteractiveViewer(
+            child: Image.file(File(photoPath), fit: BoxFit.contain),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
