@@ -129,42 +129,28 @@ class _HomeScreenState extends State<HomeScreen> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Удалить заказ?'),
+        title: const Text(
+          'Удалить заказ?',
+          textAlign: TextAlign.center
+          ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Вы действительно хотите удалить Заказ:  ${order.orderNumber}?',
+              'Все фотографии заказа ${order.orderNumber} будут удалены',
+              textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.orange[50],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.warning_amber_rounded, color: Colors.orange[700], size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Все фотографии этого заказа будут удалены безвозвратно',
-                      style: TextStyle(fontSize: 13, color: Colors.orange[800]),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Отмена'),
           ),
+          const SizedBox(width: 12),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
@@ -199,7 +185,6 @@ class _HomeScreenState extends State<HomeScreen> {
         final orderDir = Directory(orderPath);
         if (await orderDir.exists()) {
           await orderDir.delete(recursive: true);
-          print('✅ Папка заказа удалена: $orderPath');
         }
       }
 
