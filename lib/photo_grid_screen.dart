@@ -84,22 +84,35 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
   }
 
  void _showPhotoDialog(String photoPath) {
-  showDialog(
-    context: context,
-    barrierColor: Colors.black,
-    fullscreenDialog: true, // 🔹 Главное!
-    builder: (context) => Dialog(
-      backgroundColor: Colors.black,
-      insetPadding: EdgeInsets.zero,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          InteractiveViewer(
-            child: Image.file(File(photoPath), fit: BoxFit.contain),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+  // 🔹 1. Находим индекс текущего фото в списке
+  final currentIndex = _photos.indexOf(photoPath);
+  
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87,
+      fullscreenDialog: true,
+      builder: (context) => PageView.builder(
+        controller: PageController(initialPage: currentIndex),
+        itemCount: _photos.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () => Navigator.pop(context), // Закрыть по тапу
+            child: InteractiveViewer(
+              minScale: 1.0,
+              maxScale: 4.0,
+              child: Image.file(
+                File(_photos[index]),
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child: Icon(Icons.broken_image, color: Colors.white70, size: 64),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      )
+    );
+  }
 }
