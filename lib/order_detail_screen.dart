@@ -4,7 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:folder_foto/main.dart';
 import 'package:folder_foto/photo_grid_screen.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:folder_foto/service/photo_storage_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:folder_foto/order.dart';
@@ -30,7 +30,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   bool _isCameraInitialized = false;
   bool _isTakingPhoto = false;
   late Order _currentOrder;
-  String? _storageRoot;
+  final service = PhotoStorageService();
 
   @override
   void initState() {
@@ -38,19 +38,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     _currentOrder = widget.order;
     _requestPermissions();
     _initializeCamera();
-    _getStorageRoot();
   }
 
-  Future<void> _getStorageRoot() async {
-    if (Platform.isAndroid) {
-      final appDir = await getExternalStorageDirectory();
-      if (appDir != null) {
-        setState(() {
-          _storageRoot = appDir.parent.parent.parent.parent.path;
-        });
-      }
-    }
-  }
+  
 
   Future<void> _requestPermissions() async {
     if (Platform.isAndroid) {
@@ -84,24 +74,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     }
   }
 
-  Future<String> _getOrderPhotosPath() async {
-    final storageRoot = _storageRoot ?? (await getExternalStorageDirectory())?.parent.parent.parent.parent.path ?? '';
-    return '$storageRoot/Pictures/OrderPhotos/${_currentOrder.orderNumber}';
-  }
-
-  Future<List<String>> _loadOrderPhotos() async {
-    final orderPath = await _getOrderPhotosPath();
-    final dir = Directory(orderPath);
-    if (!await dir.exists()) return [];
-    
-    final files = await dir.list().toList();
-    return files
-        .where((f) => f is File && (f.path.endsWith('.jpg') || f.path.endsWith('.jpeg')))
-        .map((f) => f.path)
-        .toList()
-      ..sort();
-  }
-
   Future<void> _takePhoto() async {
     if (_isTakingPhoto || !_isCameraInitialized || _cameraController == null) return;
 
@@ -109,7 +81,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     try {
       final XFile photo = await _cameraController!.takePicture();
-      final orderPath = await _getOrderPhotosPath();
+      final orderPath = await service.getOrderPhotosPath(_currentOrder.orderNumber);
       
       final orderDir = Directory(orderPath);
       if (!await orderDir.exists()) {
@@ -143,7 +115,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   void _navigateToPhotos() async {
-    final photos = await _loadOrderPhotos();
+    final photos = await service.loadOrderPhotos(_currentOrder.orderNumber);
     if (!mounted) return;
     
     Navigator.push(

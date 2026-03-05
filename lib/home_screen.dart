@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:folder_foto/photo_grid_screen.dart';
+import 'package:folder_foto/service/photo_storage_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -17,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Order> _orders = [];
   bool _isLoading = true;
+  final service = PhotoStorageService();
 
   @override
   void initState() {
@@ -250,6 +253,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
+  void _navigateToGallery(Order order) async {
+
+    print(order.orderNumber);
+
+   List<String> photos =  await service.loadOrderPhotos(order.orderNumber);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PhotoGridScreen(
+          orderNumber: order.orderNumber,
+          photoPaths:photos
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -322,6 +342,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                   // 🔹 перехода в галерею
+                                  IconButton(
+                                    icon: const Icon(Icons.photo_library, color: Color.fromARGB(255, 77, 73, 73)),
+                                    onPressed: () => _navigateToGallery(order),
+                                    tooltip: 'Перейти в галерею заказа',
+                                  ),
+                                  const SizedBox( width: 12),
                                   // 🔹 Кнопка удаления
                                   IconButton(
                                     icon: const Icon(Icons.delete_outline, color: Colors.red),
