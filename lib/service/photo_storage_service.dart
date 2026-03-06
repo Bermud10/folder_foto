@@ -5,20 +5,22 @@ class PhotoStorageService {
   
   String? _storageRoot;
 
-Future<String?> _getStorageRoot() async {
-    if (Platform.isAndroid) {
-      final appDir = await getExternalStorageDirectory();
-      if (appDir != null) {
-        _storageRoot = appDir.parent.parent.parent.parent.path;
-        return _storageRoot;
-      }
-    }
-    return'';
-  }
+
 
   Future<String> getOrderPhotosPath(String number) async {
-    final storageRoot = _storageRoot ?? (await getExternalStorageDirectory())?.parent.parent.parent.parent.path ?? '';
-    return '$storageRoot/Pictures/OrderPhotos/$number';
+
+   if(_storageRoot != null && _storageRoot !=''){
+      return '$_storageRoot/Pictures/OrderPhotos/$number';
+    }
+
+    final path = (await getExternalStorageDirectory())?.parent.parent.parent.parent.path;
+
+    if(path != null){
+      _storageRoot = path;
+      return '$_storageRoot/Pictures/OrderPhotos/$number';
+    }
+
+    throw Exception('Не удалось получить доступ к хранилищу');
   }
 
   Future<List<String>> loadOrderPhotos(String number) async {
