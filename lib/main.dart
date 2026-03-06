@@ -17,8 +17,14 @@ class OrderPhotoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Фотографии заказов',
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          // seedColor: const Color.fromARGB(255, 26, 37, 82),
+          seedColor: const Color.fromARGB(255, 26, 82, 37),
+          brightness: Brightness.light,
+        ),
+      ),
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
     );

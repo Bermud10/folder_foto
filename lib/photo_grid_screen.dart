@@ -31,7 +31,7 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Фото заказа - ${widget.orderNumber}'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: _photos.isEmpty
           ? Center(
