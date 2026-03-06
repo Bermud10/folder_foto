@@ -164,17 +164,16 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 🔹 Номер заказа
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-          ),
-
-          // 🔹 Камера (40% экрана)
+      
           Expanded(
-            flex: 4,
+            flex: 3,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
+              ),
               child: CameraPreview(_cameraController!),
             ),
           ),
@@ -208,7 +207,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
           // 🔹 Кнопка "Фотографии заказа"
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.only(right: 12, left: 12, bottom: 12),
             child: SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
