@@ -34,9 +34,12 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 flutter_launcher_icons:
+ # для смены иконки после ее загрузки надо выполнить команду в терминале 
+ # flutter pub run flutter_launcher_icons
   android: true
   ios: true
-  image_path: "assets/icon/icons.png"  # Путь к вашему файлу иконки
+  # image_path: "assets/icon/icons.png"  # Путь к вашему файлу иконки
+  image_path: "assets/icon/camera.png"  # Путь к вашему файлу иконки
   # image_path_ios: "assets/icon/app_icon_ios.png" # Можно отдельно для iOS
 
 flutter:
