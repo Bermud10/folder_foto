@@ -19,6 +19,7 @@ class PhotoGridScreen extends StatefulWidget {
 
 class _PhotoGridScreenState extends State<PhotoGridScreen> {
   late List<String> _photos;
+  bool _isDeleteMode = false;
 
   @override
   void initState() {
@@ -33,10 +34,18 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
         title: Text('Фото заказа - ${widget.orderNumber}'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.delete, color: Colors.white)
-          )
+        Icon(Icons.delete, color: Colors.white),
+        Switch(
+          value: _isDeleteMode,
+          activeThumbColor: Colors.white,
+          inactiveTrackColor: Colors.grey,
+          onChanged: (value) {
+            setState(() {
+              _isDeleteMode = value;
+            });
+          }
+        ),
+        const SizedBox(width:10)
         ],
       ),
       body: _photos.isEmpty
@@ -86,11 +95,14 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
                         },
                       ),
                     ),
-                    Positioned(right: 1, top: 1, child:IconButton(
-                      onPressed: () {print("Delete foto");},
-                      icon: Icon(Icons.delete_outline, color: Colors.red,)
+                    if(_isDeleteMode) ...[
+                      Positioned(right: 1, top: 1, child:IconButton(
+                        onPressed: () {print("Delete foto");},
+                        icon: Icon(Icons.delete_outline, color: Colors.red,)
                       )
-                    )
+                      )
+                    ]
+                    
                     ],
                   ),
                 );
