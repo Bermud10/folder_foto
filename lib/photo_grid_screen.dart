@@ -64,18 +64,24 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () => _showPhotoDialog(_photos[index]),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      File(_photos[index]),
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.broken_image, color: Colors.grey),
-                        );
-                      },
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        File(_photos[index]),
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.broken_image, color: Colors.grey),
+                          );
+                        },
+                      ),
                     ),
+                    Positioned(right: 0, top: 2, child: Icon(Icons.delete_outline, color: Colors.red,),)
+                    ],
                   ),
                 );
               },
