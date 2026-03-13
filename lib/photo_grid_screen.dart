@@ -32,6 +32,12 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
       appBar: AppBar(
         title: Text('Фото заказа - ${widget.orderNumber}'),
         backgroundColor: Theme.of(context).colorScheme.primary,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.delete, color: Colors.white)
+          )
+        ],
       ),
       body: _photos.isEmpty
           ? Center(
@@ -80,7 +86,11 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
                         },
                       ),
                     ),
-                    Positioned(right: 0, top: 2, child: Icon(Icons.delete_outline, color: Colors.red,),)
+                    Positioned(right: 1, top: 1, child:IconButton(
+                      onPressed: () {print("Delete foto");},
+                      icon: Icon(Icons.delete_outline, color: Colors.red,)
+                      )
+                    )
                     ],
                   ),
                 );
