@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:folder_foto/service/photo_storage_service.dart';
 
 class PhotoGridScreen extends StatefulWidget {
   final String orderNumber;
@@ -20,6 +21,7 @@ class PhotoGridScreen extends StatefulWidget {
 class _PhotoGridScreenState extends State<PhotoGridScreen> {
   late List<String> _photos;
   bool _isDeleteMode = false;
+  final service = PhotoStorageService();
 
   @override
   void initState() {
@@ -143,4 +145,62 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
       )
     );
   }
+
+ Future<bool> confirmDeleteDialog() async {
+  
+  return await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text("Удалить фотографию?"),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Отмена'),
+        ),
+        const SizedBox(width: 12),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+          ),
+          child: const Text('Удалить'),
+        ),
+      ],
+    )
+    ) ?? false;
+    
+ }
+
+ Future<void> _deleteFoto(String photoPath) async {
+    final confirm = await confirmDeleteDialog();
+
+    if(!confirm){
+      return;
+    }
+    try{
+      await service.deleteFoto(photoPath);
+
+      setState(() {
+        _photos.remove(photoPath);
+      });
+
+    // 4. Обновить Order (callback)
+    // widget.onPhotoDeleted?.call(photoPath);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Фото удалено')),
+    );
+
+    }catch(e){
+ ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Ошибка: ${e.toString()}')),
+    );
+    }
+    
+
+
+ }
 }
