@@ -7,11 +7,13 @@ import 'package:folder_foto/service/photo_storage_service.dart';
 class PhotoGridScreen extends StatefulWidget {
   final String orderNumber;
   final List<String> photoPaths;
+  final Function(String)? onPhotoDeleted; 
 
   const PhotoGridScreen({
     super.key,
     required this.orderNumber,
     required this.photoPaths,
+    this.onPhotoDeleted
   });
 
   @override
@@ -99,7 +101,7 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
                     ),
                     if(_isDeleteMode) ...[
                       Positioned(right: 1, top: 1, child:IconButton(
-                        onPressed: () {print("Delete foto");},
+                        onPressed: () => _deleteFoto(_photos[index]),
                         icon: Icon(Icons.delete_outline, color: Colors.red,)
                       )
                       )
@@ -188,7 +190,7 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
       });
 
     // 4. Обновить Order (callback)
-    // widget.onPhotoDeleted?.call(photoPath);
+    widget.onPhotoDeleted?.call(photoPath);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Фото удалено')),
