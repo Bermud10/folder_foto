@@ -153,7 +153,7 @@ class _PhotoGridScreenState extends State<PhotoGridScreen> {
   return await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text("Удалить фотографию?"),
+      title: Text("Удалить фотографию?", textAlign: TextAlign.center),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
