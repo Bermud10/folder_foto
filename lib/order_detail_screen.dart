@@ -124,6 +124,23 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         builder: (context) => PhotoGridScreen(
           orderNumber: _currentOrder.orderNumber,
           photoPaths: photos,
+          onPhotoDeleted: (deletedPhotoPath) {
+          // Обновить Order (убрать путь из photoPaths)
+          final updatedOrder = Order(
+            id: _currentOrder.id,
+            orderNumber: _currentOrder.orderNumber,
+            createdAt: _currentOrder.createdAt,
+            photoPaths: _currentOrder.photoPaths
+                .where((p) => p != deletedPhotoPath)
+                .toList(),
+          );
+          
+          // Обновить состояние
+          setState(() => _currentOrder = updatedOrder);
+          
+          // Сохранить в SharedPreferences
+          widget.onOrderUpdated(updatedOrder);
+        },
         ),
       ),
     );

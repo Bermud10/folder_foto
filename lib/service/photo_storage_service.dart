@@ -35,5 +35,14 @@ class PhotoStorageService {
         .toList()
       ..sort();
   }
+
+  Future<void> deleteFoto(String photoPath) async {
+
+    final file = File(photoPath);
+    
+    if (await file.exists()) {
+      await file.delete();
+    }
+  }
   
 }
