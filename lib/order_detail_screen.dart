@@ -177,68 +177,122 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Заказ:  ${_currentOrder.orderNumber}'),
+        title: Text('Заказ:  ${_currentOrder.orderNumber}', style: TextStyle(color: Colors.white),),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: 
+      Stack(
+        fit: StackFit.expand,
         children: [
+          CameraPreview(_cameraController!),
+          Positioned(
+           bottom: 40,
+           left: 0,
+           right: 0,
+           child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                onTap: _navigateToPhotos,
+                child:
+                 Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.3)
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.photo_library, size: 35),
+                  ),
+                  ),
+                ),
+              ),
+           
+              Expanded(
+                child: GestureDetector(
+                  onTap: _isTakingPhoto ? null : _takePhoto,
+                  child:
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.3)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: _isTakingPhoto ? 
+                      CircularProgressIndicator(strokeWidth: 2)
+                     : Icon(Icons.circle, size: 60),
+                    ),
+                  ),
+                ),
+              ),
+           
+              Expanded(child: Container())
+              ],
+            ))
+        ]
+      )
       
-          Expanded(
-            flex: 3,
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
-              ),
-              child: CameraPreview(_cameraController!),
-            ),
-          ),
+      
+      // Column(
+      //   crossAxisAlignment: CrossAxisAlignment.stretch,
+      //   children: [
+      
+      //     Expanded(
+      //       flex: 3,
+      //       child: ClipRRect(
+      //         borderRadius: BorderRadius.only(
+      //         bottomLeft: Radius.circular(20),
+      //         bottomRight: Radius.circular(20),
+      //         ),
+      //         child: CameraPreview(_cameraController!),
+      //       ),
+      //     ),
 
-          // 🔹 Кнопка съёмки
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _isTakingPhoto ? null : _takePhoto,
-                icon: _isTakingPhoto
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.camera_alt, size: 24),
-                label: Text(
-                  _isTakingPhoto ? 'Съёмка...' : 'Сделать фото',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 168, 139, 110),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-              ),
-            ),
-          ),
+      //     // 🔹 Кнопка съёмки
+      //     Container(
+      //       padding: const EdgeInsets.all(12),
+      //       child: SizedBox(
+      //         width: double.infinity,
+      //         child: ElevatedButton.icon(
+      //           onPressed: _isTakingPhoto ? null : _takePhoto,
+      //           icon: _isTakingPhoto
+      //               ? const SizedBox(
+      //                   width: 20,
+      //                   height: 20,
+      //                   child: CircularProgressIndicator(strokeWidth: 2),
+      //                 )
+      //               : const Icon(Icons.camera_alt, size: 24),
+      //           label: Text(
+      //             _isTakingPhoto ? 'Съёмка...' : 'Сделать фото',
+      //             style: const TextStyle(fontSize: 16),
+      //           ),
+      //           style: ElevatedButton.styleFrom(
+      //             backgroundColor: const Color.fromARGB(255, 168, 139, 110),
+      //             foregroundColor: Colors.white,
+      //             padding: const EdgeInsets.symmetric(vertical: 14),
+      //           ),
+      //         ),
+      //       ),
+      //     ),
 
-          // 🔹 Кнопка "Фотографии заказа"
-          Padding(
-            padding: const EdgeInsets.only(right: 12, left: 12, bottom: 12),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _navigateToPhotos,
-                icon: const Icon(Icons.photo_library, size: 20),
-                label: const Text('Фотографии заказа', style: TextStyle(fontSize: 16)),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      //     // 🔹 Кнопка "Фотографии заказа"
+      //     Padding(
+      //       padding: const EdgeInsets.only(right: 12, left: 12, bottom: 12),
+      //       child: SizedBox(
+      //         width: double.infinity,
+      //         child: OutlinedButton.icon(
+      //           onPressed: _navigateToPhotos,
+      //           icon: const Icon(Icons.photo_library, size: 20),
+      //           label: const Text('Фотографии заказа', style: TextStyle(fontSize: 16)),
+      //           style: OutlinedButton.styleFrom(
+      //             padding: const EdgeInsets.symmetric(vertical: 12),
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
