@@ -193,17 +193,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             children: [
               Expanded(
                 child: GestureDetector(
-                onTap: _navigateToPhotos,
-                child:
-                 Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.3)
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.photo_library, size: 35),
-                  ),
+                  onTap: _navigateToPhotos,
+                  child:
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.3)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.photo_library, size: 35,color: Color.fromARGB(192, 255, 255, 255)),
+                    ),
                   ),
                 ),
               ),
@@ -213,15 +213,24 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   onTap: _isTakingPhoto ? null : _takePhoto,
                   child:
                   Container(
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white.withValues(alpha: 0.3)
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: _isTakingPhoto ? 
-                      CircularProgressIndicator(strokeWidth: 2)
-                     : Icon(Icons.circle, size: 60),
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5, 
+                          color: Colors.white, 
+                          padding: const EdgeInsets.all(6.0)
+                        ),
+                      )
+                     : Icon(Icons.circle, size: 60, color: Color.fromARGB(200, 255, 255, 255),),
                     ),
                   ),
                 ),
@@ -232,67 +241,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             ))
         ]
       )
-      
-      
-      // Column(
-      //   crossAxisAlignment: CrossAxisAlignment.stretch,
-      //   children: [
-      
-      //     Expanded(
-      //       flex: 3,
-      //       child: ClipRRect(
-      //         borderRadius: BorderRadius.only(
-      //         bottomLeft: Radius.circular(20),
-      //         bottomRight: Radius.circular(20),
-      //         ),
-      //         child: CameraPreview(_cameraController!),
-      //       ),
-      //     ),
-
-      //     // 🔹 Кнопка съёмки
-      //     Container(
-      //       padding: const EdgeInsets.all(12),
-      //       child: SizedBox(
-      //         width: double.infinity,
-      //         child: ElevatedButton.icon(
-      //           onPressed: _isTakingPhoto ? null : _takePhoto,
-      //           icon: _isTakingPhoto
-      //               ? const SizedBox(
-      //                   width: 20,
-      //                   height: 20,
-      //                   child: CircularProgressIndicator(strokeWidth: 2),
-      //                 )
-      //               : const Icon(Icons.camera_alt, size: 24),
-      //           label: Text(
-      //             _isTakingPhoto ? 'Съёмка...' : 'Сделать фото',
-      //             style: const TextStyle(fontSize: 16),
-      //           ),
-      //           style: ElevatedButton.styleFrom(
-      //             backgroundColor: const Color.fromARGB(255, 168, 139, 110),
-      //             foregroundColor: Colors.white,
-      //             padding: const EdgeInsets.symmetric(vertical: 14),
-      //           ),
-      //         ),
-      //       ),
-      //     ),
-
-      //     // 🔹 Кнопка "Фотографии заказа"
-      //     Padding(
-      //       padding: const EdgeInsets.only(right: 12, left: 12, bottom: 12),
-      //       child: SizedBox(
-      //         width: double.infinity,
-      //         child: OutlinedButton.icon(
-      //           onPressed: _navigateToPhotos,
-      //           icon: const Icon(Icons.photo_library, size: 20),
-      //           label: const Text('Фотографии заказа', style: TextStyle(fontSize: 16)),
-      //           style: OutlinedButton.styleFrom(
-      //             padding: const EdgeInsets.symmetric(vertical: 12),
-      //           ),
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
