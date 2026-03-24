@@ -31,6 +31,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   bool _isTakingPhoto = false;
   late Order _currentOrder;
   final service = PhotoStorageService();
+  // bool _flashEnabled = false;
 
   @override
   void initState() {
@@ -80,7 +81,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     setState(() => _isTakingPhoto = true);
 
     try {
+      
+      // if(_flashEnabled) {
+        await _cameraController!.setFlashMode(FlashMode.off);
+      // }
+
       final XFile photo = await _cameraController!.takePicture();
+      // await Future.delayed(Duration(milliseconds: 1000));
+
+      // await _cameraController!.setFlashMode(FlashMode.auto);
+      // await Future.delayed(Duration(milliseconds: 200));
+      // await _cameraController!.setFlashMode(FlashMode.off);
+      
       final orderPath = await service.getOrderPhotosPath(_currentOrder.orderNumber);
       
       final orderDir = Directory(orderPath);
@@ -113,6 +125,20 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       if (mounted) setState(() => _isTakingPhoto = false);
     }
   }
+
+  // Future<void> _flashLaunch() async {
+  //   if (_cameraController == null || !_cameraController!.value.isInitialized) return;
+    
+  //   try {
+  //     setState(() {
+  //       _flashEnabled = !_flashEnabled;
+  //     });
+      
+  //   } catch (e) {
+  //     print("ошибка включения вспышки");
+  //     throw Exception(e);
+  //   }
+  // }
 
   void _navigateToPhotos() async {
     final photos = await service.loadOrderPhotos(_currentOrder.orderNumber);
@@ -177,68 +203,89 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Заказ:  ${_currentOrder.orderNumber}'),
+        title: Text('Заказ:  ${_currentOrder.orderNumber}', style: TextStyle(color: Colors.white),),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: 
+      Stack(
+        fit: StackFit.expand,
         children: [
-      
-          Expanded(
-            flex: 3,
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
+          CameraPreview(_cameraController!),
+          Positioned(
+           bottom: 40,
+           left: 0,
+           right: 0,
+           child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: _navigateToPhotos,
+                  child:
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.3)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.photo_library, size: 35,color: Color.fromARGB(180, 255, 255, 255)),
+                    ),
+                  ),
+                ),
               ),
-              child: CameraPreview(_cameraController!),
-            ),
-          ),
-
-          // 🔹 Кнопка съёмки
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _isTakingPhoto ? null : _takePhoto,
-                icon: _isTakingPhoto
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+           
+              Expanded(
+                child: GestureDetector(
+                  onTap: _isTakingPhoto ? null : _takePhoto,
+                  child:
+                  Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.3)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: _isTakingPhoto ? 
+                      SizedBox(
+                        width: 75,
+                        height: 75,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5, 
+                          color: Colors.white, 
+                          padding: const EdgeInsets.all(8.0)
+                        ),
                       )
-                    : const Icon(Icons.camera_alt, size: 24),
-                label: Text(
-                  _isTakingPhoto ? 'Съёмка...' : 'Сделать фото',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 168, 139, 110),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                     : Icon(Icons.circle, size: 75, color: Color.fromARGB(180, 255, 255, 255),),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-
-          // 🔹 Кнопка "Фотографии заказа"
-          Padding(
-            padding: const EdgeInsets.only(right: 12, left: 12, bottom: 12),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _navigateToPhotos,
-                icon: const Icon(Icons.photo_library, size: 20),
-                label: const Text('Фотографии заказа', style: TextStyle(fontSize: 16)),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+           
+              Expanded(child: Container())
+              // Expanded(child: GestureDetector(
+              //     onTap: _flashLaunch,
+              //     child:
+              //     Container(
+              //       decoration: BoxDecoration(
+              //         shape: BoxShape.circle,
+              //         color: Colors.white.withValues(alpha: 0.3)
+              //       ),
+              //       child: Padding(
+              //         padding: const EdgeInsets.all(8.0),
+              //         child: Icon(_flashEnabled
+              //         ? Icons.flash_auto
+              //         : Icons.flash_off, 
+              //         size: 35,
+              //         color: Color.fromARGB(180, 255, 255, 255)
+              //         ),
+              //       ),
+              //     ),
+              //   ),)
+              ],
+            ))
+        ]
+      )
     );
   }
 }
