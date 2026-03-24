@@ -31,6 +31,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   bool _isTakingPhoto = false;
   late Order _currentOrder;
   final service = PhotoStorageService();
+  // bool _flashEnabled = false;
 
   @override
   void initState() {
@@ -80,7 +81,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     setState(() => _isTakingPhoto = true);
 
     try {
+      
+      // if(_flashEnabled) {
+        await _cameraController!.setFlashMode(FlashMode.off);
+      // }
+
       final XFile photo = await _cameraController!.takePicture();
+      // await Future.delayed(Duration(milliseconds: 1000));
+
+      // await _cameraController!.setFlashMode(FlashMode.auto);
+      // await Future.delayed(Duration(milliseconds: 200));
+      // await _cameraController!.setFlashMode(FlashMode.off);
+      
       final orderPath = await service.getOrderPhotosPath(_currentOrder.orderNumber);
       
       final orderDir = Directory(orderPath);
@@ -113,6 +125,20 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       if (mounted) setState(() => _isTakingPhoto = false);
     }
   }
+
+  // Future<void> _flashLaunch() async {
+  //   if (_cameraController == null || !_cameraController!.value.isInitialized) return;
+    
+  //   try {
+  //     setState(() {
+  //       _flashEnabled = !_flashEnabled;
+  //     });
+      
+  //   } catch (e) {
+  //     print("ошибка включения вспышки");
+  //     throw Exception(e);
+  //   }
+  // }
 
   void _navigateToPhotos() async {
     final photos = await service.loadOrderPhotos(_currentOrder.orderNumber);
@@ -202,7 +228,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.photo_library, size: 35,color: Color.fromARGB(192, 255, 255, 255)),
+                      child: Icon(Icons.photo_library, size: 35,color: Color.fromARGB(180, 255, 255, 255)),
                     ),
                   ),
                 ),
@@ -219,24 +245,43 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       color: Colors.white.withValues(alpha: 0.3)
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(2.0),
                       child: _isTakingPhoto ? 
                       SizedBox(
-                        width: 60,
-                        height: 60,
+                        width: 75,
+                        height: 75,
                         child: CircularProgressIndicator(
                           strokeWidth: 5, 
                           color: Colors.white, 
-                          padding: const EdgeInsets.all(6.0)
+                          padding: const EdgeInsets.all(8.0)
                         ),
                       )
-                     : Icon(Icons.circle, size: 60, color: Color.fromARGB(200, 255, 255, 255),),
+                     : Icon(Icons.circle, size: 75, color: Color.fromARGB(180, 255, 255, 255),),
                     ),
                   ),
                 ),
               ),
            
               Expanded(child: Container())
+              // Expanded(child: GestureDetector(
+              //     onTap: _flashLaunch,
+              //     child:
+              //     Container(
+              //       decoration: BoxDecoration(
+              //         shape: BoxShape.circle,
+              //         color: Colors.white.withValues(alpha: 0.3)
+              //       ),
+              //       child: Padding(
+              //         padding: const EdgeInsets.all(8.0),
+              //         child: Icon(_flashEnabled
+              //         ? Icons.flash_auto
+              //         : Icons.flash_off, 
+              //         size: 35,
+              //         color: Color.fromARGB(180, 255, 255, 255)
+              //         ),
+              //       ),
+              //     ),
+              //   ),)
               ],
             ))
         ]
