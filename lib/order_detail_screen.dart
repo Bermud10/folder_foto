@@ -31,7 +31,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   bool _isTakingPhoto = false;
   late Order _currentOrder;
   final service = PhotoStorageService();
-  // bool _flashEnabled = false;
 
   @override
   void initState() {
@@ -82,16 +81,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     try {
       
-      // if(_flashEnabled) {
-        await _cameraController!.setFlashMode(FlashMode.off);
-      // }
-
+      await _cameraController!.setFlashMode(FlashMode.off);
+      
       final XFile photo = await _cameraController!.takePicture();
-      // await Future.delayed(Duration(milliseconds: 1000));
-
-      // await _cameraController!.setFlashMode(FlashMode.auto);
-      // await Future.delayed(Duration(milliseconds: 200));
-      // await _cameraController!.setFlashMode(FlashMode.off);
+      
       
       final orderPath = await service.getOrderPhotosPath(_currentOrder.orderNumber);
       
@@ -126,19 +119,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     }
   }
 
-  // Future<void> _flashLaunch() async {
-  //   if (_cameraController == null || !_cameraController!.value.isInitialized) return;
-    
-  //   try {
-  //     setState(() {
-  //       _flashEnabled = !_flashEnabled;
-  //     });
-      
-  //   } catch (e) {
-  //     print("ошибка включения вспышки");
-  //     throw Exception(e);
-  //   }
-  // }
 
   void _navigateToPhotos() async {
     final photos = await service.loadOrderPhotos(_currentOrder.orderNumber);
@@ -263,25 +243,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               ),
            
               Expanded(child: Container())
-              // Expanded(child: GestureDetector(
-              //     onTap: _flashLaunch,
-              //     child:
-              //     Container(
-              //       decoration: BoxDecoration(
-              //         shape: BoxShape.circle,
-              //         color: Colors.white.withValues(alpha: 0.3)
-              //       ),
-              //       child: Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Icon(_flashEnabled
-              //         ? Icons.flash_auto
-              //         : Icons.flash_off, 
-              //         size: 35,
-              //         color: Color.fromARGB(180, 255, 255, 255)
-              //         ),
-              //       ),
-              //     ),
-              //   ),)
               ],
             ))
         ]
