@@ -31,6 +31,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   bool _isTakingPhoto = false;
   late Order _currentOrder;
   final service = PhotoStorageService();
+  Offset? _focusPoint;
+  bool _showFocusIndicator = false;
 
   @override
   void initState() {
@@ -130,6 +132,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   await _cameraController!.setFocusPoint(Offset(x, y));
   await _cameraController!.setFocusMode(FocusMode.auto);
+
+  setState(() {
+    _focusPoint = details.localPosition;
+    _showFocusIndicator = true;
+  });
+    
+  await Future.delayed(Duration(seconds: 2));
+  if (mounted) {
+    setState(() => _showFocusIndicator = false);
+  }
+
  }
 
 
@@ -206,6 +219,22 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           GestureDetector(
             onTapDown: _focusOnTap ,
             child: CameraPreview(_cameraController!)
+          ),
+           if (_showFocusIndicator && _focusPoint != null)
+          Positioned(
+            left: _focusPoint!.dx - 15,  // Центрирование (15 = половина размера)
+            top: _focusPoint!.dy - 15,
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  width: 2
+                ),
+                shape: BoxShape.circle,
+              ),
+            ),
           ),
           Positioned(
            bottom: 40,
