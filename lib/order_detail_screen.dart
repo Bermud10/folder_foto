@@ -119,6 +119,19 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     }
   }
 
+ Future<void> _focusOnTap(TapDownDetails details) async {
+  
+  if(_cameraController == null || !_cameraController!.value.isInitialized) return;
+
+  final sizeScreen = MediaQuery.of(context).size;
+
+  final x = details.localPosition.dx / sizeScreen.width;
+  final y = details.localPosition.dy / sizeScreen.height;
+
+  await _cameraController!.setFocusPoint(Offset(x, y));
+  await _cameraController!.setFocusMode(FocusMode.auto);
+ }
+
 
   void _navigateToPhotos() async {
     final photos = await service.loadOrderPhotos(_currentOrder.orderNumber);
@@ -190,7 +203,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       Stack(
         fit: StackFit.expand,
         children: [
-          CameraPreview(_cameraController!),
+          GestureDetector(
+            onTapDown: _focusOnTap ,
+            child: CameraPreview(_cameraController!)
+          ),
           Positioned(
            bottom: 40,
            left: 0,
