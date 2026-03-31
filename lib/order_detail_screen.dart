@@ -33,6 +33,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   final service = PhotoStorageService();
   Offset? _focusPoint;
   bool _showFocusIndicator = false;
+  double _currentZoom = 1.0;
+  double _minZoom = 1.0;
+  double _maxZoom = 1.0;
 
   @override
   void initState() {
@@ -66,7 +69,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     try {
       await _cameraController!.initialize();
       if (!mounted) return;
-      setState(() => _isCameraInitialized = true);
+
+      _minZoom = await _cameraController!.getMinZoomLevel();
+      _maxZoom = await _cameraController!.getMaxZoomLevel();
+
+      setState(() {
+        _isCameraInitialized = true;
+      });
+
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -110,7 +120,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       setState(() => _currentOrder = updatedOrder);
       widget.onOrderUpdated(updatedOrder);
     } catch (e) {
-      print('❌ Ошибка: $e');
+      print('Ошибка: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка: ${e.toString()}'), duration: const Duration(seconds: 3)),
@@ -142,6 +152,20 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   if (mounted) {
     setState(() => _showFocusIndicator = false);
   }
+
+ }
+
+ Future<void> _updateZoom(double value) async {
+
+  if(_cameraController == null || !_isCameraInitialized) return;
+
+  value = value.clamp(_minZoom, _maxZoom);
+  
+  await _cameraController!.setZoomLevel(value);
+
+  setState(() {
+     _currentZoom = value;
+  });
 
  }
 
@@ -220,22 +244,43 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             onTapDown: _focusOnTap ,
             child: CameraPreview(_cameraController!)
           ),
-           if (_showFocusIndicator && _focusPoint != null)
-          Positioned(
+          if (_showFocusIndicator && _focusPoint != null) ...[
+            Positioned(
             left: _focusPoint!.dx - 15,  // Центрирование (15 = половина размера)
             top: _focusPoint!.dy - 15,
-            child: Container(
+            child: Container (
               width: 30,
               height: 30,
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.5),
                   width: 2
-                ),
+                  ),
                 shape: BoxShape.circle,
+                ),
               ),
             ),
+          ],
+
+          Positioned(
+            left: 8,
+            bottom: 250,
+            child: RotatedBox(
+              quarterTurns: 3,  //Поворот на 270 градусов
+              child: SizedBox(
+                width: 250,
+                child: Slider(
+                  min: _minZoom,
+                  max: _maxZoom,
+                  value: _currentZoom,
+                  onChanged: _updateZoom,
+                  activeColor: Color.fromARGB(180, 255, 255, 255),
+                  inactiveColor: Color.fromARGB(40, 255, 255, 255),
+                ),
+              ),
+            )
           ),
+          
           Positioned(
            bottom: 40,
            left: 0,
