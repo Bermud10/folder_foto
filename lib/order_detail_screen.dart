@@ -31,7 +31,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   bool _isTakingPhoto = false;
   late Order _currentOrder;
   final service = PhotoStorageService();
-  // bool _flashEnabled = false;
+  Offset? _focusPoint;
+  bool _showFocusIndicator = false;
 
   @override
   void initState() {
@@ -82,16 +83,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     try {
       
-      // if(_flashEnabled) {
-        await _cameraController!.setFlashMode(FlashMode.off);
-      // }
-
+      await _cameraController!.setFlashMode(FlashMode.off);
+      
       final XFile photo = await _cameraController!.takePicture();
-      // await Future.delayed(Duration(milliseconds: 1000));
-
-      // await _cameraController!.setFlashMode(FlashMode.auto);
-      // await Future.delayed(Duration(milliseconds: 200));
-      // await _cameraController!.setFlashMode(FlashMode.off);
+      
       
       final orderPath = await service.getOrderPhotosPath(_currentOrder.orderNumber);
       
@@ -126,19 +121,30 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     }
   }
 
-  // Future<void> _flashLaunch() async {
-  //   if (_cameraController == null || !_cameraController!.value.isInitialized) return;
+ Future<void> _focusOnTap(TapDownDetails details) async {
+  
+  if(_cameraController == null || !_cameraController!.value.isInitialized) return;
+
+  final sizeScreen = MediaQuery.of(context).size;
+
+  final x = details.localPosition.dx / sizeScreen.width;
+  final y = details.localPosition.dy / sizeScreen.height;
+
+  await _cameraController!.setFocusPoint(Offset(x, y));
+  await _cameraController!.setFocusMode(FocusMode.auto);
+
+  setState(() {
+    _focusPoint = details.localPosition;
+    _showFocusIndicator = true;
+  });
     
-  //   try {
-  //     setState(() {
-  //       _flashEnabled = !_flashEnabled;
-  //     });
-      
-  //   } catch (e) {
-  //     print("ошибка включения вспышки");
-  //     throw Exception(e);
-  //   }
-  // }
+  await Future.delayed(Duration(seconds: 2));
+  if (mounted) {
+    setState(() => _showFocusIndicator = false);
+  }
+
+ }
+
 
   void _navigateToPhotos() async {
     final photos = await service.loadOrderPhotos(_currentOrder.orderNumber);
@@ -210,7 +216,26 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       Stack(
         fit: StackFit.expand,
         children: [
-          CameraPreview(_cameraController!),
+          GestureDetector(
+            onTapDown: _focusOnTap ,
+            child: CameraPreview(_cameraController!)
+          ),
+           if (_showFocusIndicator && _focusPoint != null)
+          Positioned(
+            left: _focusPoint!.dx - 15,  // Центрирование (15 = половина размера)
+            top: _focusPoint!.dy - 15,
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  width: 2
+                ),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
           Positioned(
            bottom: 40,
            left: 0,
@@ -263,25 +288,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               ),
            
               Expanded(child: Container())
-              // Expanded(child: GestureDetector(
-              //     onTap: _flashLaunch,
-              //     child:
-              //     Container(
-              //       decoration: BoxDecoration(
-              //         shape: BoxShape.circle,
-              //         color: Colors.white.withValues(alpha: 0.3)
-              //       ),
-              //       child: Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Icon(_flashEnabled
-              //         ? Icons.flash_auto
-              //         : Icons.flash_off, 
-              //         size: 35,
-              //         color: Color.fromARGB(180, 255, 255, 255)
-              //         ),
-              //       ),
-              //     ),
-              //   ),)
               ],
             ))
         ]
