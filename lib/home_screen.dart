@@ -59,9 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
             labelText: 'Номер заказа',
             border: OutlineInputBorder(),
           ),
-          keyboardType: TextInputType.number,
           autofocus: true,
-          onSubmitted: (_) => _createOrder(controller.text.trim()),
+          onSubmitted: (_) => _validateNameOrder(controller.text.trim()),
         ),
         actions: [
           TextButton(
@@ -69,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: const Text('Отмена'),
           ),
           ElevatedButton(
-            onPressed: () => _createOrder(controller.text.trim()),
+            onPressed: () => _validateNameOrder(controller.text.trim()),
             child: const Text('OK'),
           ),
         ],
@@ -77,18 +76,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 🔹 Создать новый заказ
-  Future<void> _createOrder(String orderNumber) async {
+  Future<void> _validateNameOrder(String orderNumber) async {
     if (orderNumber.isEmpty) {
       _showSnackBar('Введите номер заказа!');
       return;
     }
 
-    if (_orders.any((o) => o.orderNumber == orderNumber)) {
+    if (!RegExp(r'^[a-zA-Zа-яА-Я0-9_-]+$').hasMatch(orderNumber)) {
+      _showSnackBar('Только буквы и цифры');
+      return ;
+    }
+
+    if (_orders.any((o) => o.orderNumber.toLowerCase() == orderNumber.toLowerCase())) {
       Navigator.pop(context);
       _showSnackBar('Заказ:  $orderNumber уже существует');
       return;
     }
+
+    _createOrder(orderNumber);
+
+  }
+
+  // 🔹 Создать новый заказ
+  Future<void> _createOrder(String orderNumber) async {
 
     final newOrder = Order(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
