@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:folder_foto/directory.dart';
 import 'package:folder_foto/photo_grid_screen.dart';
 import 'package:folder_foto/service/photo_storage_service.dart';
 import 'package:path_provider/path_provider.dart';
@@ -280,6 +281,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openDirectory() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => DirectoryPage()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -289,15 +294,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
-          // 🔹 Кнопка "Новый заказ"
+          //🔹 Кнопка "Справочник"
           Padding(
             padding: const EdgeInsets.all(16),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _showNewOrderDialog,
-                icon: const Icon(Icons.add, size: 24),
-                label: const Text('Новый заказ', style: TextStyle(fontSize: 16)),
+                onPressed: _openDirectory,
+                icon: const Icon(Icons.book_outlined, size: 24),
+                label: const Text('Справочник', style: TextStyle(fontSize: 16)),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   elevation: 2,
@@ -305,7 +310,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          const Divider(height: 1),
           // 🔹 Список заказов
           Expanded(
             child: _isLoading
@@ -323,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Нажмите "Новый заказ" чтобы начать',
+                              'Нажмите "+ Заказ" чтобы начать',
                               style: TextStyle(color: Colors.grey[500], fontSize: 14),
                             ),
                           ],
@@ -374,6 +378,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
           ),
         ],
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: FloatingActionButton.extended(
+          onPressed: _showNewOrderDialog,
+          icon: const Icon(Icons.add, size: 24),
+          label: const Text('Заказ'),
+          foregroundColor: const Color.fromARGB(255, 26, 82, 37),
+          backgroundColor: const Color.fromARGB(255, 242, 246, 243),
+          ),
       ),
     );
   }
