@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:folder_foto/battery_calculator.dart';
 import 'package:folder_foto/directory.dart';
 import 'package:folder_foto/photo_grid_screen.dart';
 import 'package:folder_foto/service/photo_storage_service.dart';
@@ -285,6 +286,10 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => DirectoryPage()));
   }
 
+  void _openCalculator() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => BatteryCalculator()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -294,20 +299,34 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
-          //🔹 Кнопка "Справочник"
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _openDirectory,
-                icon: const Icon(Icons.book_outlined, size: 24),
-                label: const Text('Справочник', style: TextStyle(fontSize: 16)),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  elevation: 2,
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                Expanded(child: 
+                  ElevatedButton.icon(
+                    onPressed: _openDirectory,
+                    icon: const Icon(Icons.book_outlined, size: 24),
+                    label: const Text('Справочник', style: TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      elevation: 2,
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(width: 15),
+                Expanded(child:
+                  ElevatedButton.icon(
+                    onPressed: _openCalculator,
+                    icon: const Icon(Icons.calculate, size: 24),
+                    label: const Text('Калькулятор', style: TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      elevation: 2,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           // 🔹 Список заказов
