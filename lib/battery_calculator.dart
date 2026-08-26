@@ -16,17 +16,34 @@ enum BatteryVoltage {
 }
 
 class BatteryCalculatorState extends State<BatteryCalculator> {
-  final countBatteries = TextEditingController();
-  final cBatteries = TextEditingController();
-  BatteryVoltage? _selectedVoltage = BatteryVoltage.v12;
 
-  // 🔹 ВАЖНО: Всегда освобождайте контроллеры, чтобы не было утечек памяти!
+  final countBatteries = TextEditingController();
+  BatteryVoltage? _selectedVoltage = BatteryVoltage.v12;
+  late Map<String, double> _calculationResults;
+  bool resultsCalc = false;
+
   @override
   void dispose() {
     countBatteries.dispose();
-    cBatteries.dispose();
     super.dispose();
   }
+
+ Map<String,double> calculation(int quantity, int uAKB) {
+  int factorElements = 1;
+  bool params = uAKB == 12;
+  if(params){
+    factorElements = 6;
+  }
+
+  double pZ = quantity * 2.27 * factorElements;
+  double uZ = quantity * 2.35 * factorElements;
+  double vZ = quantity * 2.4 * factorElements;
+  double tCompens = ((params)? 0.02 : 0.003) * quantity;
+  return{"pZ": pZ, "uZ": uZ, "vZ": vZ, "tCompens": tCompens};
+ }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,48 +65,53 @@ class BatteryCalculatorState extends State<BatteryCalculator> {
               },
               child: Row(
                 children: [
+                   Expanded(
+                     child: RadioListTile<BatteryVoltage>(
+                     shape: RoundedRectangleBorder(borderRadius: .circular(15)),
+                     title: Text('12В'),
+                     value: BatteryVoltage.v12,
+                     ),
+                   ),
                   Expanded(
-                    child: ListTile(
-                      title: const Text('2В'),
-                      leading: Radio<BatteryVoltage>(
-                        value: BatteryVoltage.v2,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListTile(
-                      title: const Text('12В'),
-                      leading: Radio<BatteryVoltage>(
-                        value: BatteryVoltage.v12,
-                      ),
+                    child: RadioListTile<BatteryVoltage>(
+                    shape: RoundedRectangleBorder(borderRadius: .circular(15)),
+                    title: Text('2В'),
+                    value: BatteryVoltage.v2,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16), // Отступ между радио и полями
+            const SizedBox(height: 16), 
             TextField(
               controller: countBatteries,
-              keyboardType: TextInputType.number, // Только цифры
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Количество батарей',
                 border: OutlineInputBorder(),
               ),
-              // autofocus УДАЛЕН
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: cBatteries,
-              keyboardType: TextInputType.number, // Только цифры
-              decoration: const InputDecoration(
-                labelText: 'Емкость батарей',
-                border: OutlineInputBorder(),
+            ElevatedButton.icon(
+              onPressed: () {
+              var quantity = int.tryParse(countBatteries.text);
+               if (quantity == null) {
+                resultsCalc = false;
+                return; 
+               }
+               _calculationResults = calculation(quantity,_selectedVoltage!.volts);
+
+              },
+              icon: const Icon(Icons.calculate, size: 24),
+              label: const Text('Расчитать', style: TextStyle(fontSize: 16)),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                elevation: 2,
               ),
-              // autofocus УДАЛЕН
             ),
           ],
         ),
       ),
     );
-  }
+  } 
 }
