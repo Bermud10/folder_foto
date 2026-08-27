@@ -19,8 +19,8 @@ class BatteryCalculatorState extends State<BatteryCalculator> {
 
   final countBatteries = TextEditingController();
   BatteryVoltage? _selectedVoltage = BatteryVoltage.v12;
-  late Map<String, double> _calculationResults;
-  bool resultsCalc = false;
+  Map<String, double>? _calculationResults;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -42,14 +42,52 @@ class BatteryCalculatorState extends State<BatteryCalculator> {
   return{"pZ": pZ, "uZ": uZ, "vZ": vZ, "tCompens": tCompens};
  }
 
+  getResult(){
 
+  if (countBatteries.text.isEmpty) {
+    setState(() {
+      _calculationResults = null;
+      _errorMessage = null;
+    });
+    return;
+  }
 
+  var quantity = int.tryParse(countBatteries.text);
+  if (quantity == null) {
+    setState(() {
+      _calculationResults = null;
+      _errorMessage = 'Введите корректное значение без пробелов';
+    });
+  return; 
+  }
+  else{
+    setState(() {
+      _errorMessage = null;
+      _calculationResults = calculation(quantity,_selectedVoltage!.volts);
+    });
+  }
+ }
+
+ Widget showResult(String h1,  double? value, String unit) {
+
+  var styleLable = TextStyle(fontSize: 20, fontWeight: FontWeight.w700);
+  var styleValue = TextStyle(fontSize: 20);
+  return Row(
+    mainAxisAlignment: .start,
+    crossAxisAlignment: .end,
+    children: [
+      Text(h1, style: styleLable),
+      Text('${value!.toStringAsFixed(3)}', style: styleValue),
+      Text(unit, style: styleValue)
+      ],
+  );
+ }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Расчет ПЗ, ВЗ, УЗ'),
+        title: const Text('Расчет ПЗ, ВЗ, УЗ, t-комп.'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Padding( // Добавил Padding, чтобы поля не прилипали к краям
@@ -61,6 +99,7 @@ class BatteryCalculatorState extends State<BatteryCalculator> {
               onChanged: (BatteryVoltage? value) {
                 setState(() {
                   _selectedVoltage = value;
+                  getResult();
                 });
               },
               child: Row(
@@ -86,29 +125,51 @@ class BatteryCalculatorState extends State<BatteryCalculator> {
             TextField(
               controller: countBatteries,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              onChanged: (value) {
+                setState(() {
+                  _errorMessage = null;
+                  getResult();
+                });
+              },
+              decoration: InputDecoration(
                 labelText: 'Количество батарей',
-                border: OutlineInputBorder(),
-              ),
+                border: const OutlineInputBorder(),
+                errorBorder: const OutlineInputBorder(),
+                errorText: _errorMessage,
+                errorStyle: const TextStyle(color: Colors.red))
             ),
             const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
-              var quantity = int.tryParse(countBatteries.text);
-               if (quantity == null) {
-                resultsCalc = false;
-                return; 
-               }
-               _calculationResults = calculation(quantity,_selectedVoltage!.volts);
-
-              },
-              icon: const Icon(Icons.calculate, size: 24),
-              label: const Text('Расчитать', style: TextStyle(fontSize: 16)),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                elevation: 2,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _calculationResults = null;
+                        countBatteries.clear();
+                        _errorMessage = null;
+                      });
+                    },
+                    icon: const Icon(Icons.clear, size: 24),
+                    label: const Text('Очистить', style: TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      elevation: 2,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            if(_calculationResults != null) ...[
+              SizedBox(height: 8),
+              showResult('ПЗ: ', _calculationResults!['pZ'], ' В'),
+              SizedBox(height: 8),
+              showResult('ВЗ: ', _calculationResults!['vZ'], ' В'),
+              SizedBox(height: 8),
+              showResult('УЗ: ', _calculationResults!['uZ'], ' В'),
+              SizedBox(height: 8),
+              showResult('Темп. компенсация: ', _calculationResults!['tCompens'], ''),
+            ]
           ],
         ),
       ),
