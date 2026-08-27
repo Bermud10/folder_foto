@@ -38,7 +38,7 @@ class BatteryCalculatorState extends State<BatteryCalculator> {
   double pZ = quantity * 2.27 * factorElements;
   double uZ = quantity * 2.35 * factorElements;
   double vZ = quantity * 2.4 * factorElements;
-  double tCompens = ((params)? 0.02 : 0.003) * quantity;
+  double tCompens = ((params)? 0.02 : 0.004) * quantity;
   return{"pZ": pZ, "uZ": uZ, "vZ": vZ, "tCompens": tCompens};
  }
 
