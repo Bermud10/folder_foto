@@ -42,7 +42,7 @@ class BatteryCalculatorState extends State<BatteryCalculator> {
   return{"pZ": pZ, "uZ": uZ, "vZ": vZ, "tCompens": tCompens};
  }
 
-  getResult(){
+  void getResult(){
 
   if (countBatteries.text.isEmpty) {
     setState(() {
