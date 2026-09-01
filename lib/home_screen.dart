@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:folder_foto/battery_calculator.dart';
+import 'package:folder_foto/dictionary_list.dart';
 import 'package:folder_foto/directory.dart';
 import 'package:folder_foto/photo_grid_screen.dart';
 import 'package:folder_foto/service/photo_storage_service.dart';
@@ -283,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _openDirectory() async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => DirectoryPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => DictionaryList()));
   }
 
   void _openCalculator() async {
