@@ -19,6 +19,15 @@ class _DirectoryPageState extends State<DirectoryPage> {
     
   }
 
+  Widget showCard(String title, String data){
+    return Card(
+      child: ListTile(
+      title: Text(title, style: TextStyle(fontWeight: FontWeight.w600),),
+      subtitle: Text( data),
+      ),
+    );
+  }
+
     @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,52 +37,16 @@ class _DirectoryPageState extends State<DirectoryPage> {
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
-        children: [
-          Card(child: ListTile(
-            title: Text('• Трехфазное питание'),
-            subtitle: Text('AC max - 450В\nAC min - 304В \nСчитается как ± 10% 400В'),
-            )
-          ),
-          Card(child: ListTile(
-            title: Text('• Однофазное питание'),
-            subtitle: Text('AC max - 242В\nAC min - 198В \nСчитается как ± 10% от 220В'),
-            )
-          ),
-          Card(child: ListTile(
-            title: Text('• U AБ'),
-            subtitle: Text('max - 244B \nmin - 198B'),
-            )
-          ),
-          Card(child: ListTile(
-            title: Text('• Ток заряда АБ'),
-            subtitle: Text('0.1 * емкость АБ'),
-            )
-          ),
-          Card(child: ListTile(
-            title: Text('• Режимы заряда'),
-            subtitle: Text('УЗ - 241В\nПЗ - 231В\nВЗ - 235В'),
-            )
-          ),
-          Card(child: ListTile(
-            title: Text('• Температура АКБ'),
-            subtitle: Text('Опорная - 25°С\nМаксимальная - 40°С\nМинимальная - 10°С')
-            )
-          ),
-          Card(child: ListTile(
-            title: Text('• Контроль изоляции'),
-            subtitle: Text('Предупреждающая - 50кОм\nАварийная - 25кОм'),
-            )
-          ),
-          Card(child: ListTile(
-            title: Text('• Коэф. темп. комп'),
-            subtitle: Text('0,306'),
-            )
-          ),
-          Card(child: ListTile(
-            title: Text('• Периодичность УЗ'),
-            subtitle: Text('180'),
-            )
-          ),
+        children: [         
+          showCard('AC Трехфазное питание', 'max - 450В\nmin - 304В \nСчитается как ± 10% 400В'),
+          showCard('AC Однофазное питание', 'max - 242В\nmin - 198В \nСчитается как ± 10% от 220В'),
+          showCard('DC / U AБ', 'max - 244B \nmin - 198B'),
+          showCard('Ток заряда АБ', '0.1 * емкость АБ'),
+          showCard('Режимы заряда', 'УЗ - 241В\nПЗ - 231В\nВЗ - 235В'),
+          showCard('Температура АКБ', 'Опорная - 25°С\nМаксимальная - 40°С\nМинимальная - 10°С'),
+          showCard('Контроль изоляции', 'Предупреждающая - 50кОм\nАварийная - 25кОм'),
+          showCard('Коэф. темп. комп', '0,306'),
+          showCard('Периодичность УЗ', '180'),
         ],
       ),
     );

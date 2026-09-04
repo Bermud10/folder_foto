@@ -40,23 +40,26 @@ class AmperageState extends State<Amperage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SingleChildScrollView(
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Сечение, мм²')),
-                  DataColumn(label: Text('Ток, А')),
-                ],
-                rows: tableDataStrings.map((item) {
-                  return DataRow(cells: [
-                    DataCell(Text(item.$1)),
-                    DataCell(Text(item.$2)),
-                  ]);
-                }).toList(),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Сечение, мм²')),
+                    DataColumn(label: Text('Ток, А')),
+                  ],
+                  rows: tableDataStrings.map((item) {
+                    return DataRow(cells: [
+                      DataCell(Text(item.$1)),
+                      DataCell(Text(item.$2)),
+                    ]);
+                  }).toList(),
+                ),
               )
-)
-          ]
+            ]
+          ),
         ),
       )
     );
