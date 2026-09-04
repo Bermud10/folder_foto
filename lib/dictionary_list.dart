@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:folder_foto/amperage.dart';
 import 'package:folder_foto/di8_ro4_info.dart';
 import 'package:folder_foto/directory.dart';
 import 'package:folder_foto/usc_info.dart';
@@ -69,6 +70,24 @@ class DictionaryListState extends State<DictionaryList> {
                       },
                       icon: const Icon(Icons.settings, size: 24),
                       label: const Text('USC настройка', style: TextStyle(fontSize: 16)),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        elevation: 2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Amperage()));
+                      },
+                      icon: const Icon(Icons.bolt_outlined, size: 24),
+                      label: const Text('Допустимый ток КЛ', style: TextStyle(fontSize: 16)),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         elevation: 2,
