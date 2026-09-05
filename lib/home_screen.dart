@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:folder_foto/battery_calculator.dart';
 import 'package:folder_foto/dictionary_list.dart';
-import 'package:folder_foto/directory.dart';
 import 'package:folder_foto/photo_grid_screen.dart';
 import 'package:folder_foto/service/photo_storage_service.dart';
 import 'package:path_provider/path_provider.dart';
