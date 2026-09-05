@@ -8,8 +8,6 @@ class UscInfo extends StatefulWidget {
   State<UscInfo> createState() => UscInfoState();
 }
 
-
-
 class UscInfoState extends State<UscInfo> {
 
   String invertor = """● Светодиод мигает 1 раз в секунду - Авария по превышению тока (КЗ)\n
@@ -53,6 +51,20 @@ String dcDcUP = """● Светодиод мигает 1 раз в секунд�
 ● Светодиод мигает постоянно - Авария перегрузка по току\n 
 ● Светодиод горит постоянно - Авария по драйверной защите  """;
 
+var styleLable = TextStyle(fontSize: 20, fontWeight: FontWeight.w700);
+
+Widget getLable(String lable){
+  return Column(
+    children: [
+      SizedBox(height: 20),
+        Text(
+          lable,
+          style: styleLable
+        ),
+    ],
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,61 +80,26 @@ String dcDcUP = """● Светодиод мигает 1 раз в секунд�
               // SizedBox(height: 8),
               Text(
               "Внешний вид платы",
-               style:TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700
-                )
+               style:styleLable
               ),
               SizedBox(height: 20),
               ZoomableImage(imagePath: 'assets/images/usc_view.png'),
-              SizedBox(height: 20),
-              Text(
-                "Режим работы платы USC",
-                 style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700)
-              ),
+              getLable("Режим работы платы USC"),
               SizedBox(height: 20),
               ZoomableImage(imagePath: 'assets/images/type_device.png'),
               SizedBox(height: 20),
-              Text(
-                "Расшифровка аварий по миганию аварийного светодиода",
-                 style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700)
-              ),
+              getLable("Расшифровка аварий по миганию аварийного светодиода"),
+              getLable("Инвертор"),
+              Text(invertor),
               SizedBox(height: 20),
-              Text(
-              "Инвертор",
-              style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700)        
-              ),
+              getLable("Выпрямитель"),
+              Text(rectifier),
               SizedBox(height: 20),
-              Text(
-              invertor                 
-              ),
+              getLable("STS"),
+              Text(sts),
               SizedBox(height: 20),
-              Text(
-              "Выпрямитель",
-              style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700)        
-              ),
-              SizedBox(height: 20),
-              Text(
-              rectifier                
-              ),
-              SizedBox(height: 20),
-              Text(
-              "STS",
-              style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700)        
-              ),
-              SizedBox(height: 20),
-              Text(
-              sts                
-              ),
-              SizedBox(height: 20),
-              Text(
-              "Повышающий DC/DC",
-              style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700)        
-              ),
-              SizedBox(height: 20),
-              Text(
-              dcDcUP                
-              ),
+              getLable("Повышающий DC/DC"),
+              Text(dcDcUP),
             ]
           ),
         ),
