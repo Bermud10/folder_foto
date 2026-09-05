@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:folder_foto/zoomable_image.dart';
 
 class Di8Ro4Info extends StatefulWidget {
   const Di8Ro4Info({super.key});
@@ -20,17 +21,18 @@ class Di8Ro4InfoState extends State<Di8Ro4Info> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              "Настройки RS485/MODBUS",
-               style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
-            SizedBox(height: 8),
-            Text(info),
-            SizedBox(height: 20),
-            InteractiveViewer(child: Image.asset('assets/images/di8ro4.png'))
-            
-          ]
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Text(
+                "Настройки RS485/MODBUS",
+                 style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
+              SizedBox(height: 8),
+              Text(info),
+              SizedBox(height: 20),
+              ZoomableImage(imagePath: 'assets/images/di8ro4.png'),
+            ]
+          ),
         ),
       )
     );

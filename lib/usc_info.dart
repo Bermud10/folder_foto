@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:folder_foto/zoomable_image.dart';
 
 class UscInfo extends StatefulWidget {
   const UscInfo({super.key});
@@ -73,14 +74,14 @@ String dcDcUP = """● Светодиод мигает 1 раз в секунд�
                 )
               ),
               SizedBox(height: 20),
-              InteractiveViewer(child: Image.asset('assets/images/usc_view.png')),
+              ZoomableImage(imagePath: 'assets/images/usc_view.png'),
               SizedBox(height: 20),
               Text(
                 "Режим работы платы USC",
                  style:TextStyle(fontSize: 20, fontWeight: FontWeight.w700)
               ),
               SizedBox(height: 20),
-              InteractiveViewer(child: Image.asset('assets/images/type_device.png')),
+              ZoomableImage(imagePath: 'assets/images/type_device.png'),
               SizedBox(height: 20),
               Text(
                 "Расшифровка аварий по миганию аварийного светодиода",

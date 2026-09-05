@@ -22,8 +22,13 @@ class _DirectoryPageState extends State<DirectoryPage> {
   Widget showCard(String title, String data){
     return Card(
       child: ListTile(
-      title: Text(title, style: TextStyle(fontWeight: FontWeight.w600),),
-      subtitle: Text( data),
+      title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w600
+            )
+          ),
+      subtitle: Text(data),
       ),
     );
   }
