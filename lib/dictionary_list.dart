@@ -55,6 +55,8 @@ class DictionaryListState extends State<DictionaryList> {
             buttonTemplate('Допустимый ток КЛ', Icons.bolt_outlined, Amperage()),
             SizedBox(height: 12),
             buttonTemplate('Настройки выпрямителей', Icons.drag_handle, RectifierInfo()),
+            SizedBox(height: 12),
+            buttonTemplate('Проверка компонентов', Icons.perm_data_setting_rounded, RectifierInfo()),
           ],
           
         ),
