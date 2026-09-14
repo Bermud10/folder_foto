@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:folder_foto/amperage.dart';
 import 'package:folder_foto/di8_ro4_info.dart';
 import 'package:folder_foto/directory.dart';
-import 'package:folder_foto/rectifier_info.dart';
+import 'package:folder_foto/rectifier/rectifier_info.dart';
 import 'package:folder_foto/usc_info.dart';
 
 class DictionaryList extends StatefulWidget {
