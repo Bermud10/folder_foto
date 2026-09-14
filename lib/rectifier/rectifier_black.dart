@@ -37,21 +37,30 @@ Map<String, String> params = {
 class RectifierBlackState extends State<RectifierBlack> {
 
   Widget printMode(String label, String info) {
-    return Row(
-      children: [
-      Text(
-       "$label: ",
-       style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w700
-        ),
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8.0),
+    child: Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: "$label: ",
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          TextSpan(
+            text: info,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ],
       ),
-      Text(
-       info
-      ), 
-      ],
-    );
-  }
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +74,12 @@ class RectifierBlackState extends State<RectifierBlack> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Text("")
+              Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: params.entries
+              .map((entry) => printMode(entry.key, entry.value))
+              .toList(),
+        ),
             ],
           ),
         ),
