@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:folder_foto/widgets/card_item.dart';
 
 class DirectoryPage extends StatefulWidget {
   
@@ -11,27 +12,18 @@ class DirectoryPage extends StatefulWidget {
 }
 
 class _DirectoryPageState extends State<DirectoryPage> {
- 
 
-  @override
-  void initState() {
-    super.initState();
-    
-  }
-
-  Widget showCard(String title, String data){
-    return Card(
-      child: ListTile(
-      title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w600
-            )
-          ),
-      subtitle: Text(data),
-      ),
-    );
-  }
+  final Map<String, String> referenceData = {
+  'AC Трехфазное питание': 'max - 450В\nmin - 304В \nСчитается как ± 10% 400В',
+  'AC Однофазное питание': 'max - 242В\nmin - 198В \nСчитается как ± 10% от 220В',
+  'DC / U AБ': 'max - 244B \nmin - 198B',
+  'Ток заряда АБ': '0.1 * емкость АБ',
+  'Режимы заряда': 'УЗ - 241В\nПЗ - 231В\nВЗ - 235В',
+  'Температура АКБ': 'Опорная - 25°С\nМаксимальная - 40°С\nМинимальная - 10°С',
+  'Контроль изоляции': 'Предупреждающая - 50кОм\nАварийная - 25кОм',
+  'Коэф. темп. комп': '0,306',
+  'Периодичность УЗ': '180',
+};
 
     @override
   Widget build(BuildContext context) {
@@ -41,19 +33,15 @@ class _DirectoryPageState extends State<DirectoryPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: ListView(
-        padding: EdgeInsets.all(16),
-        children: [         
-          showCard('AC Трехфазное питание', 'max - 450В\nmin - 304В \nСчитается как ± 10% 400В'),
-          showCard('AC Однофазное питание', 'max - 242В\nmin - 198В \nСчитается как ± 10% от 220В'),
-          showCard('DC / U AБ', 'max - 244B \nmin - 198B'),
-          showCard('Ток заряда АБ', '0.1 * емкость АБ'),
-          showCard('Режимы заряда', 'УЗ - 241В\nПЗ - 231В\nВЗ - 235В'),
-          showCard('Температура АКБ', 'Опорная - 25°С\nМаксимальная - 40°С\nМинимальная - 10°С'),
-          showCard('Контроль изоляции', 'Предупреждающая - 50кОм\nАварийная - 25кОм'),
-          showCard('Коэф. темп. комп', '0,306'),
-          showCard('Периодичность УЗ', '180'),
-        ],
-      ),
+        padding: const EdgeInsets.all(16),
+        children:  referenceData.entries.map((entry) {
+              return CardItem(
+                key: Key(entry.key),
+                label: entry.key,
+                body: entry.value
+              );
+            }).toList(),
+          )
     );
   }
 }

@@ -54,6 +54,8 @@ flutter:
     - assets/images/di8ro4.png
     - assets/images/usc_view.png
     - assets/images/type_device.png
+    - assets/images/black_rectifier.jpg
+    - assets/images/grey_rectifier.jpg
     - assets/icon/
 
   # An image asset can refer to one or more resolution-specific "variants", see

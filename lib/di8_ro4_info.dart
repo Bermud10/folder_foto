@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:folder_foto/zoomable_image.dart';
+import 'package:folder_foto/widgets/zoomable_image.dart';
 
 class Di8Ro4Info extends StatefulWidget {
   const Di8Ro4Info({super.key});

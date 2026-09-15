@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:folder_foto/widgets/card_item.dart';
 
 class RectifierBlack extends StatefulWidget {
   const RectifierBlack({super.key});
@@ -7,7 +8,9 @@ class RectifierBlack extends StatefulWidget {
   State<RectifierBlack> createState() => RectifierBlackState();
 }
 
-Map<String, String> params = {
+class RectifierBlackState extends State<RectifierBlack> {
+
+ static const Map<String, String> params = {
   "F00 Режим работы": "0 - Одиночный, 1 - Ручной, 2 - Авто",
   "F01 Протокол связи": "0-7 (8 Протоколов связи)",
   "F02 U Max": "110В - 320В",
@@ -22,7 +25,7 @@ Map<String, String> params = {
   "F11 Мах время УЗ": "0-99 Часов",
   "F12 Цикл УЗ": "0-999 Дней",
   "F13 Сухой контакт аварии": "0 - Открыт, 1 - Закрыт",
-  "F14 Информацию тока": "0 - не показывать, 1 - показывать",
+  "F14 Информация о токе": "0 - не показывать, 1 - показывать",
   "F15 защита от превыш U": "0 - аварии, 1 - завышение",
   "F16 U по умолчанию": "Min Напряжение - Max Напряжение",
   "F17 Группировочный признак": "0-3",
@@ -34,39 +37,11 @@ Map<String, String> params = {
   "F23 Ручное управление переключателем режимов": "включать | выключать"
 };
 
-class RectifierBlackState extends State<RectifierBlack> {
-
-  Widget printMode(String label, String info) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 8.0),
-    child: Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: "$label: ",
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          TextSpan(
-            text: info,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Настройка черного выпрямителей'),
+        title: const Text('Настройка черного выпрямителя'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Padding(
@@ -74,16 +49,16 @@ class RectifierBlackState extends State<RectifierBlack> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Image.asset('assets/images/usc_view.png'), // заменить фотку
+              Image.asset('assets/images/black_rectifier.jpg'),
               SizedBox(height: 16),
-              Text('Для перехода в режим настройки параметров необходимо удердивать клавишу ***'),
+              Text('Для перехода в режим настройки параметров необходимо удерживать клавишу "ввод" до появления F00.'),
               SizedBox(height: 8),
-              Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: params.entries
-              .map((entry) => printMode(entry.key, entry.value))
-              .toList(),
-              ),
+              ...params.entries
+              .map((entry) => CardItem(
+                key: Key(entry.key),
+                label: entry.key,
+                body: entry.value
+              )),
               Text('*По умолчанию выпрямитель находится в автоматическом режиме работы (2 - Авто)'),
               SizedBox(height: 8),
               Text('*Настройки протокола связи: 0 - MODBUS, 1 - TH, 2 - ENPC, 3 - ENPS + MODBUS'),

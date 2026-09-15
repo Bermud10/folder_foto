@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:folder_foto/zoomable_image.dart';
+import 'package:folder_foto/widgets/zoomable_image.dart';
 
 class UscInfo extends StatefulWidget {
   const UscInfo({super.key});
