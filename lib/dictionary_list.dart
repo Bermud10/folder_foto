@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:folder_foto/amperage.dart';
+import 'package:folder_foto/anks3m.dart';
+import 'package:folder_foto/component_check/component_navigator.dart';
 import 'package:folder_foto/di8_ro4_info.dart';
 import 'package:folder_foto/directory.dart';
 import 'package:folder_foto/rectifier/rectifier_info.dart';
 import 'package:folder_foto/usc_info.dart';
+import 'package:folder_foto/widgets/custom_button.dart';
 
 class DictionaryList extends StatefulWidget {
   const DictionaryList({super.key});
@@ -14,26 +17,6 @@ class DictionaryList extends StatefulWidget {
 
 
 class DictionaryListState extends State<DictionaryList> {
-
-  Widget buttonTemplate(String lable, IconData icon, Widget target){
-    return Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => target));
-                  },
-                  icon: Icon(icon, size: 24),
-                  label: Text(lable, style: TextStyle(fontSize: 16)),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    elevation: 2,
-                  ),
-                ),
-              ),
-            ],
-          );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,17 +29,19 @@ class DictionaryListState extends State<DictionaryList> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            buttonTemplate('Уставки', Icons.book, DirectoryPage()),
-            SizedBox(height: 12),
-            buttonTemplate('DI8RO4 адреса', Icons.settings, Di8Ro4Info()),
-            SizedBox(height: 12),
-            buttonTemplate('плата USC', Icons.settings, UscInfo()),
-            SizedBox(height: 12),
-            buttonTemplate('Допустимый ток КЛ', Icons.bolt_outlined, Amperage()),
-            SizedBox(height: 12),
-            buttonTemplate('Настройки выпрямителей', Icons.drag_handle, RectifierInfo()),
-            SizedBox(height: 12),
-            buttonTemplate('Проверка компонентов', Icons.perm_data_setting_rounded, RectifierInfo()),
+            CustomButton(label: 'Уставки', icon: Icons.book, target: DirectoryPage()),
+            const SizedBox(height: 12),
+            CustomButton(label: 'DI8RO4 адреса', icon: Icons.settings, target: Di8Ro4Info()),
+            const SizedBox(height: 12),
+            CustomButton(label: 'плата USC', icon: Icons.settings, target: UscInfo()),
+            const SizedBox(height: 12),
+            CustomButton(label: 'Допустимый ток КЛ', icon: Icons.bolt_outlined, target: Amperage()),
+            const SizedBox(height: 12),
+            CustomButton(label: 'Настройки выпрямителей', icon: Icons.drag_handle, target: RectifierInfo()),
+            const SizedBox(height: 12),
+            CustomButton(label: 'Проверка компонентов', icon: Icons.perm_data_setting_rounded, target: ComponentNavigator()),
+            const SizedBox(height: 12),
+            CustomButton(label: 'ЭНКС 3М', icon: Icons.bento, target: Anks3m()),
           ],
           
         ),
