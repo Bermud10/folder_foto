@@ -20,6 +20,11 @@ String infoRXtX = """Tx и Rx — это сокращения для обозн�
 По этому Tx и Rx на разъеме Con.B должны быть перевернуты!
  """;
 
+ String infoTITC = """
+  • ТИ - аналоговые сигналы, в адресации начинаются с 1000.\n
+  • ТС - Логические сигналы, в адресации начинаются с 1.
+""";
+
 class Anks3mState extends State<Anks3m> {
 
   @override
@@ -68,8 +73,14 @@ class Anks3mState extends State<Anks3m> {
               Text(
                 infoRXtX,
               ),
-              SizedBox(height: 20),
-              PdfLinkButton(label: "Документация ЭНКС", pdfUrl: 'https://enip2.ru/documentation/re_encs.403500.001.pdf')
+              SizedBox(height: 8),
+              Text(
+                infoTITC,
+              ),
+              PdfLinkButton(
+                label: "Документация ЭНКС",
+                pdfUrl: 'https://enip2.ru/documentation/re_encs.403500.001.pdf'
+              )
             ]
           ),
         ),
