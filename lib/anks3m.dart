@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:folder_foto/widgets/pdf_link_button.dart';
 import 'package:folder_foto/widgets/zoomable_image.dart';
 
 class Anks3m extends StatefulWidget {
@@ -8,7 +9,16 @@ class Anks3m extends StatefulWidget {
   State<Anks3m> createState() => Anks3mState();
 }
 
-// String info = '''Настройка и подключение энкса''';
+String infoRXtX = """Tx и Rx — это сокращения для обозначения направления передачи данных между устройствами\n
+• Tx (Transmit) — передатчик / отправка данных.\n
+• Rx (Receive) — приемник / получение данных.\n
+
+Как правильно подключать (распиновка)\n
+При соединении двух устройств контакты всегда подключаются крест-накрест (перекрестно):\n
+• Tx одного устройства соединяется с RX другого (Tx → Rx).\n
+• Rx одного устройства соединяется с TX другого (Rx ← Tx).\n
+По этому Tx и Rx на разъеме Con.B должны быть перевернуты!
+ """;
 
 class Anks3mState extends State<Anks3m> {
 
@@ -54,6 +64,12 @@ class Anks3mState extends State<Anks3m> {
               ZoomableImage(imagePath: 'assets/images/conA.png'),
               SizedBox(height: 20),
               ZoomableImage(imagePath: 'assets/images/conB.png'),
+              SizedBox(height: 20),
+              Text(
+                infoRXtX,
+              ),
+              SizedBox(height: 20),
+              PdfLinkButton(label: "Документация ЭНКС", pdfUrl: 'https://enip2.ru/documentation/re_encs.403500.001.pdf')
             ]
           ),
         ),
