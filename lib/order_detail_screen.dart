@@ -6,8 +6,8 @@ import 'package:folder_foto/main.dart';
 import 'package:folder_foto/photo_grid_screen.dart';
 import 'package:folder_foto/service/photo_storage_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import 'package:folder_foto/order.dart';
+import 'package:flutter/services.dart';
 
 
 // ==================== СТРАНИЦА ЗАКАЗА ====================
@@ -43,6 +43,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     _currentOrder = widget.order;
     _requestPermissions();
     _initializeCamera();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
   }
 
   
@@ -205,6 +208,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   @override
   void dispose() {
     _cameraController?.dispose();
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
 
