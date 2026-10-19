@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:folder_foto/widgets/pdf_link_button.dart';
 import 'package:folder_foto/widgets/zoomable_image.dart';
+import 'package:folder_foto/widgets/link_button.dart';
 
 class Anks3m extends StatefulWidget {
   const Anks3m({super.key});
@@ -80,6 +81,11 @@ class Anks3mState extends State<Anks3m> {
               PdfLinkButton(
                 label: "Документация ЭНКС",
                 pdfUrl: 'https://enip2.ru/documentation/re_encs.403500.001.pdf'
+              ),
+              LinkButton(
+                label: 'Weintek cMT2078X',
+                url: 'https://www.weintek.net/cMT2078X.html',
+                icon: Icons.language,
               )
             ]
           ),
