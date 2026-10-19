@@ -11,21 +11,21 @@ import 'package:flutter/services.dart';
 
 
 // ==================== СТРАНИЦА ЗАКАЗА ====================
-class OrderDetailScreen extends StatefulWidget {
+class CameraScreen extends StatefulWidget {
   final Order order;
   final Function(Order) onOrderUpdated;
 
-  const OrderDetailScreen({
+  const CameraScreen({
     super.key,
     required this.order,
     required this.onOrderUpdated,
   });
 
   @override
-  State<OrderDetailScreen> createState() => _OrderDetailScreenState();
+  State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _OrderDetailScreenState extends State<OrderDetailScreen> {
+class _CameraScreenState extends State<CameraScreen> {
   CameraController? _cameraController;
   bool _isCameraInitialized = false;
   bool _isTakingPhoto = false;

@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'order.dart';
-import 'order_detail_screen.dart';
+import 'camera_screen.dart';
 
 // ==================== ГЛАВНЫЙ ЭКРАН ====================
 class HomeScreen extends StatefulWidget {
@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => OrderDetailScreen(
+          builder: (context) => CameraScreen(
             order: newOrder,
             onOrderUpdated: _updateOrderInList,
           ),
@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => OrderDetailScreen(
+        builder: (context) => CameraScreen(
           order: order,
           onOrderUpdated: _updateOrderInList,
         ),
