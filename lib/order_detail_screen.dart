@@ -36,6 +36,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   double _currentZoom = 1.0;
   double _minZoom = 1.0;
   double _maxZoom = 1.0;
+  double _baseZoom = 1.0;
 
   @override
   void initState() {
@@ -75,6 +76,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
       _minZoom = await _cameraController!.getMinZoomLevel();
       _maxZoom = await _cameraController!.getMaxZoomLevel();
+      _baseZoom = _minZoom;
 
       setState(() {
         _isCameraInitialized = true;
@@ -158,21 +160,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
  }
 
- Future<void> _updateZoom(double value) async {
-
-  if(_cameraController == null || !_isCameraInitialized) return;
-
-  value = value.clamp(_minZoom, _maxZoom);
-  
-  await _cameraController!.setZoomLevel(value);
-
-  setState(() {
-     _currentZoom = value;
-  });
-
- }
-
-
   void _navigateToPhotos() async {
     final photos = await service.loadOrderPhotos(_currentOrder.orderNumber);
     if (!mounted) return;
@@ -204,6 +191,26 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       ),
     );
   }
+
+  void _onScaleUpdate(ScaleUpdateDetails details) {
+  // Вычисляем новый уровень зума
+  double newZoom = _baseZoom * details.scale;
+  
+  // Ограничиваем зум минимальным и максимальным значениями
+  newZoom = newZoom.clamp(_minZoom, _maxZoom);
+  
+  // Применяем зум к камере
+  _cameraController!.setZoomLevel(newZoom).then((_) {
+    setState(() {
+      _currentZoom = newZoom;
+    });
+  });
+}
+
+void _onScaleStart(ScaleStartDetails details) {
+  // Сохраняем текущий зум как базовый для расчета
+  _baseZoom = _currentZoom;
+}
 
   @override
   void dispose() {
@@ -245,6 +252,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         fit: StackFit.expand,
         children: [
           GestureDetector(
+            onScaleStart: _onScaleStart,
+            onScaleUpdate: _onScaleUpdate,
             onTapDown: _focusOnTap ,
             child: CameraPreview(_cameraController!)
           ),
@@ -265,25 +274,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               ),
             ),
           ],
-
-          Positioned(
-            left: 8,
-            bottom: 250,
-            child: RotatedBox(
-              quarterTurns: 3,  //Поворот на 270 градусов
-              child: SizedBox(
-                width: 250,
-                child: Slider(
-                  min: _minZoom,
-                  max: _maxZoom,
-                  value: _currentZoom,
-                  onChanged: _updateZoom,
-                  activeColor: Color.fromARGB(180, 255, 255, 255),
-                  inactiveColor: Color.fromARGB(40, 255, 255, 255),
-                ),
-              ),
-            )
-          ),
           
           Positioned(
            bottom: 40,
