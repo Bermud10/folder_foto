@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:folder_foto/component_check/current_sensor.dart';
 import 'package:folder_foto/component_check/thyristor_module.dart';
+import 'package:folder_foto/component_check/transformer.dart';
 import 'package:folder_foto/component_check/transistor_module.dart';
 import 'package:folder_foto/widgets/custom_button.dart';
 
@@ -41,6 +42,12 @@ class ComponentNavigatorState extends State<ComponentNavigator> {
               label: 'Токовый датчик',
               icon: Icons.offline_bolt_outlined,
               target: CurrentSensor(),
+            ),
+            const SizedBox(height: 8),
+            CustomButton(
+              label: 'Подключение трансформатора',
+              icon: Icons.pallet,
+              target: Transformer(),
             ),
           ],
           ),
