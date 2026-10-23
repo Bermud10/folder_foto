@@ -90,7 +90,7 @@ class BatteryCalculatorState extends State<BatteryCalculator> {
         title: const Text('Расчет ПЗ, ВЗ, УЗ, t-комп.'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Padding( // Добавил Padding, чтобы поля не прилипали к краям
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
