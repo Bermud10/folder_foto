@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:folder_foto/main.dart';
@@ -37,6 +36,8 @@ class _CameraScreenState extends State<CameraScreen> {
   double _minZoom = 1.0;
   double _maxZoom = 1.0;
   double _baseZoom = 1.0;
+  double _currentExposureOffset = 0.0;
+  double _minExposureOffset = 0.0;
 
   @override
   void initState() {
@@ -50,7 +51,6 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   
-
   Future<void> _requestPermissions() async {
     if (Platform.isAndroid) {
       await Permission.camera.request();
@@ -77,6 +77,9 @@ class _CameraScreenState extends State<CameraScreen> {
       _minZoom = await _cameraController!.getMinZoomLevel();
       _maxZoom = await _cameraController!.getMaxZoomLevel();
       _baseZoom = _minZoom;
+
+      _minExposureOffset = await _cameraController!.getMinExposureOffset();
+      // _maxExposureOffset = await _cameraController!.getMaxExposureOffset();
 
       setState(() {
         _isCameraInitialized = true;
@@ -136,29 +139,47 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
- Future<void> _focusOnTap(TapDownDetails details) async {
-  
-  if(_cameraController == null || !_cameraController!.value.isInitialized) return;
-
-  final sizeScreen = MediaQuery.of(context).size;
-
-  final x = details.localPosition.dx / sizeScreen.width;
-  final y = details.localPosition.dy / sizeScreen.height;
-
-  await _cameraController!.setFocusPoint(Offset(x, y));
-  await _cameraController!.setFocusMode(FocusMode.auto);
-
-  setState(() {
-    _focusPoint = details.localPosition;
-    _showFocusIndicator = true;
-  });
+  Future<void> _focusOnTap(TapDownDetails details) async {
     
-  await Future.delayed(Duration(seconds: 2));
-  if (mounted) {
-    setState(() => _showFocusIndicator = false);
+    if(_cameraController == null || !_cameraController!.value.isInitialized) return;
+
+    final sizeScreen = MediaQuery.of(context).size;
+
+    final x = details.localPosition.dx / sizeScreen.width;
+    final y = details.localPosition.dy / sizeScreen.height;
+
+    await _cameraController!.setFocusPoint(Offset(x, y));
+    await _cameraController!.setFocusMode(FocusMode.auto);
+
+    setState(() {
+      _focusPoint = details.localPosition;
+      _showFocusIndicator = true;
+    });
+      
+    await Future.delayed(Duration(seconds: 2));
+    if (mounted) {
+      setState(() => _showFocusIndicator = false);
+    }
+
   }
 
- }
+  Future<void> _toggleExposure() async {
+    if (_cameraController == null) return;
+
+    if (_currentExposureOffset == 0.0) {
+      await _cameraController!.setExposureOffset(_minExposureOffset);
+      setState(() {
+        _currentExposureOffset = _minExposureOffset;
+      });
+    } 
+    
+    else {
+      await _cameraController!.setExposureOffset(0.0);
+      setState(() {
+        _currentExposureOffset = 0.0;
+      });
+    }
+  }
 
   void _navigateToPhotos() async {
     final photos = await service.loadOrderPhotos(_currentOrder.orderNumber);
@@ -326,8 +347,19 @@ void _onScaleStart(ScaleStartDetails details) {
                 ),
               ),
            
-              Expanded(child: Container())
-              ],
+              Expanded(child:
+                GestureDetector(
+                  onTap: _toggleExposure,
+                  child: Icon(
+                    _currentExposureOffset == 0.0 
+                        ? Icons.nightlight_rounded
+                        : Icons.light_mode,
+                    size: 32,
+                    color:Color.fromARGB(180, 255, 255, 255),
+                  ),
+                )
+              )
+            ],
             ))
         ]
       )
