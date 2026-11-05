@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:folder_foto/battery_calculator.dart';
 import 'package:folder_foto/dictionary_list.dart';
+import 'package:folder_foto/order_note_screen.dart';
 import 'package:folder_foto/photo_grid_screen.dart';
 import 'package:folder_foto/service/photo_storage_service.dart';
 import 'package:path_provider/path_provider.dart';
@@ -228,6 +229,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _navigateToNote(Order order) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OrderNoteScreen(orderNumber: order.orderNumber),
+      ),
+    );
+    
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
@@ -333,13 +347,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Card(
                             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                             child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: Text(
-                                  order.orderNumber.substring(0, order.orderNumber.length.clamp(0, 2)),
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                ),
-                              ),
                               title: Text(
                                 'Заказ:  ${order.orderNumber}',
                                 style: const TextStyle(fontWeight: FontWeight.w500),
@@ -348,6 +355,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  // 🔹 создание заметки
+                                  FutureBuilder<bool>(
+                                    future: service.hasNote(order.orderNumber),
+                                    builder: (context, snapshot) {
+                                      final hasNote = snapshot.data == true;
+                                      
+                                      return IconButton(
+                                        icon: Icon(
+                                          hasNote ? Icons.sticky_note_2 : Icons.edit_note,
+                                          color: hasNote ? const Color.fromARGB(255, 26, 82, 37) : const Color.fromARGB(255, 77, 73, 73),
+                                        ),
+                                        onPressed: () => _navigateToNote(order),
+                                        iconSize: 32,
+                                        tooltip: hasNote ? 'Редактировать заметку' : 'Создать заметку',
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox( width: 12),
                                    // 🔹 перехода в галерею
                                   IconButton(
                                     icon: const Icon(Icons.photo_library, color: Color.fromARGB(255, 77, 73, 73)),

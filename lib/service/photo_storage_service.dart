@@ -14,7 +14,7 @@ class PhotoStorageService {
 
   Future<String> getOrderPhotosPath(String number) async {
     final appDir = await _getAppDirectory();
-    final orderDirPath = '${appDir.path}/OrderPhotos/$number';
+    final orderDirPath = '${appDir.path}/OrderPhotos/$number/photos';
 
     // Создаём папку, если её ещё нет
     final orderDir = Directory(orderDirPath);
@@ -69,5 +69,23 @@ class PhotoStorageService {
   Future<bool> hasPhotos(String number) async {
     final photos = await loadOrderPhotos(number);
     return photos.isNotEmpty;
+  }
+
+  Future<bool> hasNote(String orderNumber) async {
+    try {
+      final appDir = await getExternalStorageDirectory();
+      if (appDir == null) return false;
+      
+      final file = File('${appDir.path}/OrderPhotos/$orderNumber/note.txt');
+      
+      if (await file.exists()) {
+        final content = await file.readAsString();
+        // Возвращаем true только если в файле есть текст (игнорируем пробелы и переносы строк)
+        return content.trim().isNotEmpty;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 }
