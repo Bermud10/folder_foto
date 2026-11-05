@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadOrders();
-    _getStorageRoot(); 
   }
 
   Future<void> _loadOrders() async {
@@ -183,27 +182,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // 🔹 Удалить заказ и его фотографии
-  Future<void> _deleteOrder(Order order) async {
+    Future<void> _deleteOrder(Order order) async {
     try {
-      // 1. Получаем корень хранилища локально
-      String? storageRoot;
-      if (Platform.isAndroid) {
-        final appDir = await getExternalStorageDirectory();
-        if (appDir != null) {
-          storageRoot = appDir.parent.parent.parent.parent.path;
-        }
-      }
+      // 1. Удаляем папку с фото и заметками через сервис
+      await service.deleteOrderDirectory(order.orderNumber);
 
-      // 2. Удаляем папку с фотографиями
-      if (storageRoot != null) {
-        final orderPath = '$storageRoot/Pictures/OrderPhotos/${order.orderNumber}';
-        final orderDir = Directory(orderPath);
-        if (await orderDir.exists()) {
-          await orderDir.delete(recursive: true);
-        }
-      }
-
-      // 3. Удаляем заказ из списка и сохраняем
+      // 2. Удаляем заказ из списка и сохраняем
       setState(() {
         _orders.removeWhere((o) => o.id == order.id);
       });
@@ -229,17 +213,6 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     }
-  }
-
-  // 🔹 Получение корня хранилища (для удаления папок)
-  Future<String?> _getStorageRoot() async {
-    if (Platform.isAndroid) {
-      final appDir = await getExternalStorageDirectory();
-      if (appDir != null) {
-        return appDir.parent.parent.parent.parent.path;
-      }
-    }
-    return null;
   }
 
   // 🔹 Открыть существующий заказ (без диалога)
