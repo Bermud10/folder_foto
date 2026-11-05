@@ -65,6 +65,39 @@ Widget getLable(String lable){
   );
 }
 
+ Widget _buildCollapsibleText(String title, String text) {
+  return Theme(
+    data: Theme.of(context).copyWith(
+      dividerColor: Colors.transparent,
+    ),
+    child: ExpansionTile(
+      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+      title: Text(
+        title,
+        style: styleLable, // Используем тот же стиль, что и в getLable
+        textAlign: TextAlign.center,
+      ),
+      trailing: const Icon(Icons.expand_more, size: 28),
+      collapsedShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Colors.grey, width: 1),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Colors.grey, width: 1),
+      ),
+      clipBehavior: Clip.antiAlias,
+      childrenPadding: EdgeInsets.zero,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Text(text),
+        ),
+      ],
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,17 +125,14 @@ Widget getLable(String lable){
               SizedBox(height: 20),
               ZoomableImage(imagePath: 'assets/images/usc_work.png'),
               getLable("Расшифровка аварий по миганию аварийного светодиода"),
-              getLable("Инвертор"),
-              Text(invertor),
-              SizedBox(height: 20),
-              getLable("Выпрямитель"),
-              Text(rectifier),
-              SizedBox(height: 20),
-              getLable("STS"),
-              Text(sts),
-              SizedBox(height: 20),
-              getLable("Повышающий DC/DC"),
-              Text(dcDcUP),
+              const SizedBox(height: 12),
+              _buildCollapsibleText("Инвертор", invertor),
+              const SizedBox(height: 12),
+              _buildCollapsibleText("Выпрямитель", rectifier),
+              const SizedBox(height: 12),
+              _buildCollapsibleText("STS", sts),
+              const SizedBox(height: 12),
+              _buildCollapsibleText("Повышающий DC/DC", dcDcUP),
             ]
           ),
         ),
