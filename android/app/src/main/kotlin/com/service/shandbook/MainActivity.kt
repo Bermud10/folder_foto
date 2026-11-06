@@ -1,4 +1,4 @@
-package com.example.folder_foto
+package com.service.shandbook
 
 import io.flutter.embedding.android.FlutterActivity
 

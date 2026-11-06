@@ -1,5 +1,5 @@
 name: folder_foto
-description: "A new Flutter project."
+description: "Приложение для фотофиксации заказов, ведения заметок и работы со справочником оборудования."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
