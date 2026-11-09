@@ -1,11 +1,12 @@
-import 'dart:io';
+// import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:folder_foto/battery_calculator.dart';
 import 'package:folder_foto/dictionary_list.dart';
 import 'package:folder_foto/order_note_screen.dart';
 import 'package:folder_foto/photo_grid_screen.dart';
 import 'package:folder_foto/service/photo_storage_service.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:folder_foto/settings.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'order.dart';
@@ -27,7 +28,44 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+     _checkStorageDirectory();
     _loadOrders();
+  }
+
+  Future<void> _checkStorageDirectory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedPath = prefs.getString('shandbook_storage_directory');
+
+    if (savedPath == null) {
+      // Если папка не выбрана, показываем диалог
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showSelectDirectoryDialog();
+      });
+    }
+  }
+
+  Future<void> _showSelectDirectoryDialog() async {
+    final service = PhotoStorageService();
+    final success = await service.selectStorageDirectory();
+
+    if (!success && mounted) {
+      // Если пользователь нажал "Отмена", можно показать предупреждение или закрыть приложение
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Для работы приложения необходимо выбрать папку для сохранения'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 5),
+        ),
+      );
+      // Можно вызвать _showSelectDirectoryDialog() снова, чтобы заставить выбрать
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Папка для заказов успешно выбрана!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
   }
 
   Future<void> _loadOrders() async {
@@ -277,12 +315,23 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => BatteryCalculator()));
   }
 
+  void _openSettings() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Фотографии заказов'),
         backgroundColor: Theme.of(context).colorScheme.primary,
+        actions: [
+          IconButton(
+          icon: const Icon(Icons.settings, color: Colors.black),
+          tooltip: 'Настройки',
+          onPressed: _openSettings,
+    ),
+        ],
       ),
       body: Column(
         children: [

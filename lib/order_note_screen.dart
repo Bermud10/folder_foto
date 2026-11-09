@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:folder_foto/service/photo_storage_service.dart';
 
 class OrderNoteScreen extends StatefulWidget {
   final String orderNumber;
@@ -27,15 +27,8 @@ class _OrderNoteScreenState extends State<OrderNoteScreen> {
   }
 
   Future<String> _getFilePath() async {
-    Directory directory;
-    if (Platform.isAndroid) {
-      final appDir = await getExternalStorageDirectory();
-      if (appDir == null) throw Exception('Не удалось получить доступ к хранилищу');
-      directory = appDir;
-    } else {
-      directory = await getApplicationDocumentsDirectory();
-    }
-    return '${directory.path}/OrderPhotos/${widget.orderNumber}/note.txt';
+    final service = PhotoStorageService(); // Или используй свой экземпляр сервиса
+    return await service.getNoteFilePath(widget.orderNumber);
   }
 
   Future<void> _loadNote() async {
@@ -58,23 +51,66 @@ class _OrderNoteScreenState extends State<OrderNoteScreen> {
     }
   }
 
-  Future<void> _saveNote() async {
-    if (_filePath == null) return;
+   Future<void> _saveNote() async {
+    // 1. Явная проверка на отсутствие пути
+    if (_filePath == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Ошибка: Папка для сохранения не выбрана! Зайдите в настройки.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
 
     try {
       final file = File(_filePath!);
       final textToSave = _controller.text.trim();
 
       if (textToSave.isEmpty) {
+        // Если текст стёрли, удаляем файл
         if (await file.exists()) {
           await file.delete();
         }
       } else {
-        await file.parent.create(recursive: true);
+        // 2. Явное и надёжное создание папки перед записью
+        final parentDir = file.parent;
+        if (!await parentDir.exists()) {
+          await parentDir.create(recursive: true);
+        }
+        
+        // 3. Запись файла
         await file.writeAsString(textToSave);
       }
+      
+      // Уведомление об успехе (опционально, можно убрать, если мешает)
+      // if (mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text('Заметка сохранена'),
+      //       backgroundColor: Colors.green,
+      //       duration: Duration(seconds: 1),
+      //     ),
+      //   );
+      // }
+      
     } catch (e) {
-      debugPrint('Ошибка сохранения: $e');
+      // 4. ПОКАЗЫВАЕМ ТОЧНУЮ ОШИБКУ
+      debugPrint('❌ Ошибка сохранения заметки: $e');
+      debugPrint('📁 Путь, который пытались использовать: $_filePath');
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Не удалось сохранить: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
     }
   }
 
