@@ -12,7 +12,6 @@ import 'order.dart';
 import 'camera_screen.dart';
 import 'package:archive/archive_io.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
 
 // ==================== ГЛАВНЫЙ ЭКРАН ====================
 class HomeScreen extends StatefulWidget {
@@ -376,6 +375,18 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
+                Expanded(child:
+                  ElevatedButton.icon(
+                    onPressed: _openCalculator,
+                    icon: const Icon(Icons.calculate, size: 24),
+                    label: const Text('Калькулятор', style: TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      elevation: 2,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 15),
                 Expanded(child: 
                   ElevatedButton.icon(
                     onPressed: _openDirectory,
@@ -387,18 +398,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 15),
-                Expanded(child:
-                  ElevatedButton.icon(
-                    onPressed: _openCalculator,
-                    icon: const Icon(Icons.calculate, size: 24),
-                    label: const Text('Калькулятор', style: TextStyle(fontSize: 16)),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      elevation: 2,
-                    ),
-                  ),
-                )
               ],
             ),
           ),
@@ -444,13 +443,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // 🔹 создание заметки
                                  PopupMenuButton<String>(
                                     icon: const Icon(Icons.more_vert),
+                                    borderRadius: BorderRadius.circular(8),
                                     onSelected: (value) {
                                       if (value == 'note') {
-                                        _navigateToNote(order); // Твой существующий метод
+                                        _navigateToNote(order); 
                                       } else if (value == 'export_zip') {
-                                        _exportOrderAsZip(order.orderNumber); // Новый метод
+                                        _exportOrderAsZip(order.orderNumber);
                                       } else if (value == 'share') {
-                                        _shareOrderPhotos(order.orderNumber); // Новый метод
+                                        _shareOrderPhotos(order.orderNumber); 
                                       }
                                     },
                                     itemBuilder: (context) => [
@@ -460,13 +460,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       const PopupMenuItem(
                                         value: 'export_zip',
-                                        child: Row(children: [Icon(Icons.archive, size: 20), SizedBox(width: 12), Text('Экспорт в ZIP')]),
+                                        child: Row(children: [Icon(Icons.send_and_archive, size: 20), SizedBox(width: 12), Text('Отправить в zip')]),
                                       ),
                                       const PopupMenuItem(
                                         value: 'share',
                                         child: Row(children: [Icon(Icons.share, size: 20), SizedBox(width: 12), Text('Отправить файлы')]),
                                       ),
                                     ],
+                                    
                                   ),
                                   const SizedBox( width: 12),
                                    // 🔹 перехода в галерею
