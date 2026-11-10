@@ -25,6 +25,17 @@ class PhotoStorageService {
     return orderDirPath;
   }
 
+   Future<String> getNoteFilePath(String orderNumber) async {
+    final appDir = await _getAppDirectory();
+    final noteDir = Directory('${appDir.path}/OrderPhotos/$orderNumber');
+    
+    if (!await noteDir.exists()) {
+      await noteDir.create(recursive: true);
+    }
+    
+    return '${noteDir.path}/note.txt';
+  }
+
   Future<List<String>> loadOrderPhotos(String number) async {
     try {
       final orderPath = await getOrderPhotosPath(number);

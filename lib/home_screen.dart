@@ -10,6 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'order.dart';
 import 'camera_screen.dart';
+import 'package:archive/archive_io.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
 
 // ==================== ГЛАВНЫЙ ЭКРАН ====================
 class HomeScreen extends StatefulWidget {
@@ -277,6 +280,89 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => BatteryCalculator()));
   }
 
+    // Отправка файлов без архива
+  Future<void> _shareOrderPhotos(String orderNumber) async {
+    try {
+      final service = PhotoStorageService();
+      final photos = await service.loadOrderPhotos(orderNumber);
+      final notePath = await service.getNoteFilePath(orderNumber);
+      final noteFile = File(notePath);
+
+      final files = <XFile>[];
+      for (var photoPath in photos) {
+        files.add(XFile(photoPath));
+      }
+      if (await noteFile.exists()) {
+        files.add(XFile(notePath));
+      }
+
+      if (files.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Нет файлов для отправки')),
+          );
+        }
+        return;
+      }
+
+      await Share.shareXFiles(files);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  // Экспорт в ZIP
+  Future<void> _exportOrderAsZip(String orderNumber) async {
+    try {
+      final service = PhotoStorageService();
+      final orderPath = await service.getOrderPhotosPath(orderNumber);
+      final orderDir = Directory(orderPath);
+      final parentDir = orderDir.parent; 
+
+      if (!await parentDir.exists()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Папка заказа не найдена')),
+          );
+        }
+        return;
+      }
+
+      final archive = Archive();
+      final files = await parentDir.list(recursive: true).toList();
+
+      for (var file in files) {
+        if (file is File) {
+          final fileBytes = await file.readAsBytes();
+          final cleanPath = file.path.replaceFirst('${parentDir.path}/', '');
+          final relativePath = 'Заказ_$orderNumber/$cleanPath'; 
+
+          archive.addFile(ArchiveFile(relativePath, fileBytes.length, fileBytes));
+        }
+      }
+
+      final zipData = ZipEncoder().encode(archive);
+      if (zipData == null) throw Exception('Не удалось создать архив');
+
+      final tempDir = await getTemporaryDirectory();
+      final zipFile = File('${tempDir.path}/Заказ_$orderNumber.zip');
+      await zipFile.writeAsBytes(zipData);
+
+      await Share.shareXFiles([XFile(zipFile.path)]);
+      await zipFile.delete();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -356,21 +442,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   // 🔹 создание заметки
-                                  FutureBuilder<bool>(
-                                    future: service.hasNote(order.orderNumber),
-                                    builder: (context, snapshot) {
-                                      final hasNote = snapshot.data == true;
-                                      
-                                      return IconButton(
-                                        icon: Icon(
-                                          hasNote ? Icons.sticky_note_2 : Icons.edit_note,
-                                          color: hasNote ? const Color.fromARGB(255, 26, 82, 37) : const Color.fromARGB(255, 77, 73, 73),
-                                        ),
-                                        onPressed: () => _navigateToNote(order),
-                                        iconSize: 32,
-                                        tooltip: hasNote ? 'Редактировать заметку' : 'Создать заметку',
-                                      );
+                                 PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert),
+                                    onSelected: (value) {
+                                      if (value == 'note') {
+                                        _navigateToNote(order); // Твой существующий метод
+                                      } else if (value == 'export_zip') {
+                                        _exportOrderAsZip(order.orderNumber); // Новый метод
+                                      } else if (value == 'share') {
+                                        _shareOrderPhotos(order.orderNumber); // Новый метод
+                                      }
                                     },
+                                    itemBuilder: (context) => [
+                                      const PopupMenuItem(
+                                        value: 'note',
+                                        child: Row(children: [Icon(Icons.edit_note, size: 20), SizedBox(width: 12), Text('Заметка')]),
+                                      ),
+                                      const PopupMenuItem(
+                                        value: 'export_zip',
+                                        child: Row(children: [Icon(Icons.archive, size: 20), SizedBox(width: 12), Text('Экспорт в ZIP')]),
+                                      ),
+                                      const PopupMenuItem(
+                                        value: 'share',
+                                        child: Row(children: [Icon(Icons.share, size: 20), SizedBox(width: 12), Text('Отправить файлы')]),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox( width: 12),
                                    // 🔹 перехода в галерею
