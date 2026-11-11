@@ -12,6 +12,7 @@ import 'order.dart';
 import 'camera_screen.dart';
 import 'package:archive/archive_io.dart';
 import 'package:share_plus/share_plus.dart';
+import 'dart:isolate';
 
 // ==================== ГЛАВНЫЙ ЭКРАН ====================
 class HomeScreen extends StatefulWidget {
@@ -19,6 +20,29 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
+}
+
+Future<String> _buildZipArchive(Map<String, dynamic> params) async {
+  final String orderNumber = params['orderNumber'] as String;
+  final List<String> filePaths = params['filePaths'] as List<String>;
+  final String tempDirPath = params['tempDirPath'] as String;
+
+  final archive = Archive();
+  
+  for (var path in filePaths) {
+    final file = File(path);
+    final fileBytes = await file.readAsBytes();
+    final relativePath = 'Заказ_$orderNumber/${path.split('/').last}';
+    archive.addFile(ArchiveFile(relativePath, fileBytes.length, fileBytes));
+  }
+
+  final zipData = ZipEncoder().encode(archive);
+  if (zipData == null) throw Exception('Не удалось создать архив');
+
+  final zipFile = File('$tempDirPath/Заказ_$orderNumber.zip');
+  await zipFile.writeAsBytes(zipData);
+  
+  return zipFile.path;
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -314,53 +338,82 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Экспорт в ZIP
-  Future<void> _exportOrderAsZip(String orderNumber) async {
-    try {
-      final service = PhotoStorageService();
-      final orderPath = await service.getOrderPhotosPath(orderNumber);
-      final orderDir = Directory(orderPath);
-      final parentDir = orderDir.parent; 
 
-      if (!await parentDir.exists()) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Папка заказа не найдена')),
-          );
-        }
-        return;
-      }
+Future<void> _exportOrderAsZip(String orderNumber) async {
+  // 1. Показываем индикатор
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => const AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text('Архивирую...'),
+        ],
+      ),
+    ),
+  );
 
-      final archive = Archive();
-      final files = await parentDir.list(recursive: true).toList();
+  try {
+    final service = PhotoStorageService();
+    final orderPath = await service.getOrderPhotosPath(orderNumber);
+    final orderDir = Directory(orderPath);
+    final parentDir = orderDir.parent;
 
-      for (var file in files) {
-        if (file is File) {
-          final fileBytes = await file.readAsBytes();
-          final cleanPath = file.path.replaceFirst('${parentDir.path}/', '');
-          final relativePath = 'Заказ_$orderNumber/$cleanPath'; 
-
-          archive.addFile(ArchiveFile(relativePath, fileBytes.length, fileBytes));
-        }
-      }
-
-      final zipData = ZipEncoder().encode(archive);
-      if (zipData == null) throw Exception('Не удалось создать архив');
-
-      final tempDir = await getTemporaryDirectory();
-      final zipFile = File('${tempDir.path}/Заказ_$orderNumber.zip');
-      await zipFile.writeAsBytes(zipData);
-
-      await Share.shareXFiles([XFile(zipFile.path)]);
-      await zipFile.delete();
-    } catch (e) {
+    if (!await parentDir.exists()) {
+      if (mounted) Navigator.pop(context);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
+          const SnackBar(content: Text('Папка заказа не найдена')),
         );
       }
+      return;
+    }
+
+    // Собираем список всех файлов
+    final files = await parentDir.list(recursive: true).toList();
+    final filePaths = files.whereType<File>().map((f) => f.path).toList();
+
+    if (filePaths.isEmpty) {
+      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Нет файлов для архивации')),
+        );
+      }
+      return;
+    }
+
+    // Получаем путь к временной папке (нужен для isolate)
+    final tempDir = await getTemporaryDirectory();
+
+    // 2. ⚡ Запускаем архивацию в отдельном потоке!
+    final zipPath = await Isolate.run(() => _buildZipArchive({
+      'orderNumber': orderNumber,
+      'filePaths': filePaths,
+      'tempDirPath': tempDir.path,
+    }));
+
+    // 3. Закрываем индикатор
+    if (mounted) Navigator.pop(context);
+
+    // 4. Отправляем файл
+    await Share.shareXFiles([XFile(zipPath)]);
+
+    // 5. Удаляем временный ZIP
+    await File(zipPath).delete();
+
+  } catch (e) {
+    if (mounted) Navigator.pop(context);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
